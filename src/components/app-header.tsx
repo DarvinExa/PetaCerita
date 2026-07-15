@@ -8,7 +8,10 @@ export function AppHeader({ userName }: { userName: string }) {
   return (
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between px-4">
-        <Link href="/dashboard" className="flex items-center gap-2 text-teal-700">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2 text-teal-700"
+        >
           <MapTrifold className="size-6" weight="bold" aria-hidden />
           <span className="text-base font-bold">PetaCerita</span>
         </Link>

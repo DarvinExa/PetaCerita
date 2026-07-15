@@ -40,10 +40,7 @@ export function MemberList({
   return (
     <ul className="flex flex-col divide-y divide-neutral-200 rounded-md border border-neutral-200 bg-white">
       {members.map((member) => (
-        <li
-          key={member.id}
-          className="flex items-center gap-3 px-4 py-3"
-        >
+        <li key={member.id} className="flex items-center gap-3 px-4 py-3">
           <span
             className="flex size-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-[13px] font-semibold text-teal-800"
             aria-hidden

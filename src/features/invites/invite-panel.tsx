@@ -83,16 +83,17 @@ export function InvitePanel({
     generateInvite,
     null,
   );
-  const [revokeState, revokeAction] = useActionState<InviteActionState, FormData>(
-    revokeInvite,
-    null,
-  );
+  const [revokeState, revokeAction] = useActionState<
+    InviteActionState,
+    FormData
+  >(revokeInvite, null);
 
   useEffect(() => {
     if (genState?.error) notify({ tone: "danger", title: genState.error });
   }, [genState, notify]);
   useEffect(() => {
-    if (revokeState?.error) notify({ tone: "danger", title: revokeState.error });
+    if (revokeState?.error)
+      notify({ tone: "danger", title: revokeState.error });
   }, [revokeState, notify]);
 
   const inviteUrl = invite ? `${baseUrl}/join/${invite.token}` : null;

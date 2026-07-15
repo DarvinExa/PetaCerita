@@ -8,7 +8,9 @@ export async function getTripDetail(tripId: string) {
     include: {
       days: { orderBy: { order: "asc" } },
       members: {
-        include: { user: { select: { id: true, name: true, avatarUrl: true } } },
+        include: {
+          user: { select: { id: true, name: true, avatarUrl: true } },
+        },
         orderBy: { joinedAt: "asc" },
       },
     },

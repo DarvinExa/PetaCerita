@@ -14,7 +14,9 @@ export type TripCardData = Trip & {
 export type GroupedTrips = Record<TripBucket, TripCardData[]>;
 
 /** Klasifikasi trip relatif terhadap hari ini (perbandingan date-only UTC). */
-export function classifyTrip(trip: Pick<Trip, "startDate" | "endDate">): TripBucket {
+export function classifyTrip(
+  trip: Pick<Trip, "startDate" | "endDate">,
+): TripBucket {
   const today = formatDateOnly(new Date());
   const start = formatDateOnly(trip.startDate);
   const end = formatDateOnly(trip.endDate);

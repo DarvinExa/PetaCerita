@@ -13,7 +13,9 @@ export interface InviteInfo {
  * agar Owner bisa menyalin ulang link (keputusan produk: link re-viewable).
  * HANYA panggil dari konteks yang sudah memverifikasi user adalah Owner.
  */
-export async function getTripInvite(tripId: string): Promise<InviteInfo | null> {
+export async function getTripInvite(
+  tripId: string,
+): Promise<InviteInfo | null> {
   const invite = await prisma.tripInvite.findUnique({
     where: { tripId },
     select: { token: true, expiresAt: true, createdAt: true },
@@ -23,7 +25,9 @@ export async function getTripInvite(tripId: string): Promise<InviteInfo | null> 
   return {
     token: invite.token,
     expiresAt: invite.expiresAt,
-    isExpired: invite.expiresAt ? invite.expiresAt.getTime() <= Date.now() : false,
+    isExpired: invite.expiresAt
+      ? invite.expiresAt.getTime() <= Date.now()
+      : false,
     createdAt: invite.createdAt,
   };
 }

@@ -14,9 +14,7 @@ export function TripCard({ trip }: { trip: TripCardData }) {
       <Card className="h-full bg-white p-4 transition-shadow group-hover:shadow-md">
         <div className="flex items-start justify-between gap-2">
           <h3 className="font-semibold text-neutral-900">{trip.name}</h3>
-          {trip.role === "OWNER" ? (
-            <Badge variant="teal">Owner</Badge>
-          ) : null}
+          {trip.role === "OWNER" ? <Badge variant="teal">Owner</Badge> : null}
         </div>
 
         <dl className="mt-3 flex flex-col gap-1.5 text-[13px] text-neutral-600">
@@ -34,7 +32,8 @@ export function TripCard({ trip }: { trip: TripCardData }) {
           <div className="flex items-center gap-1.5">
             <Users className="size-4 text-neutral-400" aria-hidden />
             <dd>
-              {trip.memberCount} {trip.memberCount === 1 ? "peserta" : "peserta"}
+              {trip.memberCount}{" "}
+              {trip.memberCount === 1 ? "peserta" : "peserta"}
             </dd>
           </div>
         </dl>

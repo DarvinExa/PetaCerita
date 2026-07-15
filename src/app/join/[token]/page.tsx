@@ -2,7 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { MapTrifold, Warning } from "@phosphor-icons/react/dist/ssr";
 import { getCurrentUser } from "@/server/auth";
-import { peekInviteTripName, joinViaInviteForm } from "@/features/invites/actions";
+import {
+  peekInviteTripName,
+  joinViaInviteForm,
+} from "@/features/invites/actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -73,7 +76,12 @@ export default async function JoinPage({
             {errorStatus ? (
               <>
                 <StatusNote status={errorStatus} />
-                <Button asChild variant="secondary" size="lg" className="w-full">
+                <Button
+                  asChild
+                  variant="secondary"
+                  size="lg"
+                  className="w-full"
+                >
                   <Link href={user ? "/dashboard" : "/login"}>
                     {user ? "Ke dashboard" : "Masuk"}
                   </Link>

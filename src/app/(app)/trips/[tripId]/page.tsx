@@ -127,11 +127,7 @@ export default async function TripDetailPage({
           </Card>
         ) : null}
 
-        <MemberList
-          tripId={tripId}
-          members={memberRows}
-          canManage={isOwner}
-        />
+        <MemberList tripId={tripId} members={memberRows} canManage={isOwner} />
       </section>
     </div>
   );

@@ -12,9 +12,7 @@ export type CreateTripState = { error: string } | null;
 // Maksimal durasi trip untuk membatasi jumlah Day yang dibuat.
 const MAX_TRIP_DAYS = 60;
 
-const dateOnly = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Tanggal tidak valid");
+const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Tanggal tidak valid");
 
 const createTripSchema = z
   .object({

@@ -122,7 +122,9 @@ export async function removeMember(
     throw err;
   }
 
-  const member = await prisma.tripMember.findUnique({ where: { id: memberId } });
+  const member = await prisma.tripMember.findUnique({
+    where: { id: memberId },
+  });
   if (!member || member.tripId !== tripId) {
     return { error: "Anggota tidak ditemukan" };
   }
@@ -175,7 +177,9 @@ export async function resolveInviteToken(
  */
 export async function peekInviteTripName(
   token: string,
-): Promise<{ status: "valid"; tripName: string } | { status: "invalid" | "expired" }> {
+): Promise<
+  { status: "valid"; tripName: string } | { status: "invalid" | "expired" }
+> {
   const gate = await limitTokenAttempt();
   if (!gate.ok) return { status: "invalid" };
 
@@ -231,7 +235,12 @@ export async function joinViaInvite(token: string): Promise<never> {
   const { tripId } = result;
   try {
     await prisma.tripMember.create({
-      data: { tripId, userId: user.id, role: "MEMBER", joinedVia: "INVITE_LINK" },
+      data: {
+        tripId,
+        userId: user.id,
+        role: "MEMBER",
+        joinedVia: "INVITE_LINK",
+      },
     });
     revalidatePath("/dashboard");
   } catch (err) {
