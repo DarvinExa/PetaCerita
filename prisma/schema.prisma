@@ -1,0 +1,112 @@
+// Skema Prisma untuk PetaCerita.
+// Model domain (User, Trip, dst.) ditambahkan pada milestone M1+.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Prisma 7: URL runtime disuntik lewat driver adapter di src/server/db.ts,
+  // URL migrasi lewat datasource di prisma.config.ts.
+}
+
+// Peran anggota di dalam satu trip.
+enum TripRole {
+  OWNER
+  MEMBER
+}
+
+// Cara seorang user bergabung ke trip.
+enum JoinMethod {
+  OWNER // pembuat trip
+  INVITE_LINK // gabung lewat shareable link
+}
+
+// User selaras dengan Supabase Auth: User.id = auth user UID.
+// Row di-upsert dari sesi terverifikasi saat login (lihat src/server/auth.ts).
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  name      String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownedTrips  Trip[]       @relation("TripOwner")
+  memberships TripMember[]
+
+  @@map("users")
+}
+
+model Trip {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  city         String
+  startDate    DateTime @db.Date
+  endDate      DateTime @db.Date
+  coverUrl     String?
+  baseCurrency String   @default("IDR")
+  ownerId      String   @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  owner   User         @relation("TripOwner", fields: [ownerId], references: [id])
+  members TripMember[]
+  days    Day[]
+  invites TripInvite[]
+
+  @@index([ownerId])
+  @@map("trips")
+}
+
+// Shareable invite link untuk sebuah trip. Token disimpan sebagai hash SHA-256
+// (kolom tokenHash) untuk lookup dan verifikasi. Token mentah juga disimpan
+// (kolom token) agar Owner bisa menyalin ulang link dari panel, sesuai
+// keputusan produk (link re-viewable, mirip Google Sheets/Canva).
+// Satu trip punya paling banyak satu invite aktif; regenerate mengganti baris.
+model TripInvite {
+  id          String    @id @default(uuid()) @db.Uuid
+  tripId      String    @unique @db.Uuid
+  token       String    @unique
+  tokenHash   String    @unique
+  createdById String    @db.Uuid
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@map("trip_invites")
+}
+
+model TripMember {
+  id        String     @id @default(uuid()) @db.Uuid
+  tripId    String     @db.Uuid
+  userId    String     @db.Uuid
+  role      TripRole   @default(MEMBER)
+  joinedVia JoinMethod @default(INVITE_LINK)
+  joinedAt  DateTime   @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Satu user hanya boleh sekali jadi anggota per trip.
+  @@unique([tripId, userId])
+  @@index([userId])
+  @@map("trip_members")
+}
+
+model Day {
+  id     String   @id @default(uuid()) @db.Uuid
+  tripId String   @db.Uuid
+  date   DateTime @db.Date
+  order  Int
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  // Satu tanggal unik per trip; order untuk urutan tampil.
+  @@unique([tripId, date])
+  @@index([tripId, order])
+  @@map("days")
+}
