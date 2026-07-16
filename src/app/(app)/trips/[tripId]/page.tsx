@@ -8,7 +8,6 @@ import {
   UsersThree,
   MapTrifold,
   Receipt,
-  Clock,
   ArrowRight,
 } from "@phosphor-icons/react/dist/ssr";
 import { requireTripMember, PermissionError } from "@/server/permissions";
@@ -22,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDateRange } from "@/lib/dates";
 import { TravelCardButton } from "@/features/trips/travel-card";
 import type { TravelCardData } from "@/features/trips/travel-card-data";
+import { TripDayOverview } from "@/features/trips/trip-day-overview";
 
 /** Bangun origin absolut dari header request untuk URL undangan. */
 async function getBaseUrl(): Promise<string> {
@@ -65,12 +65,6 @@ export default async function TripDetailPage({
     isSelf: m.userId === membership.userId,
   }));
 
-  const dayFmt = new Intl.DateTimeFormat("id-ID", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  });
   const travelCardData: TravelCardData = {
     tripName: trip.name,
     city: trip.city,
@@ -161,67 +155,19 @@ export default async function TripDetailPage({
             <ArrowRight className="size-4" aria-hidden />
           </Link>
         </div>
-        <div className="flex flex-col gap-4">
-          {trip.days.map((day, index) => (
-            <Card key={day.id} className="overflow-hidden p-0">
-              <div className="flex items-center justify-between gap-4 border-b border-white/70 bg-neutral-50 px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <span className="flex size-8 items-center justify-center doodle-sticker bg-teal-800 text-[12px] font-bold text-white">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-teal-700">
-                      Hari {index + 1}
-                    </p>
-                    <p className="text-[14px] font-semibold text-neutral-900">
-                      {dayFmt.format(day.date)}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[12px] font-medium text-neutral-500">
-                  {day.items.length} tempat
-                </span>
-              </div>
-              {day.items.length > 0 ? (
-                <div className="divide-y divide-neutral-100">
-                  {day.items.slice(0, 4).map((item) => (
-                    <div
-                      key={item.id}
-                      className="grid grid-cols-[72px_1fr] items-center gap-3 px-4 py-3"
-                    >
-                      <span className="inline-flex items-center gap-1 text-[12px] font-semibold tabular-nums text-neutral-500">
-                        <Clock
-                          className="size-3.5 text-neutral-400"
-                          aria-hidden
-                        />
-                        {item.startTime ?? "Belum"}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-[14px] font-medium text-neutral-900">
-                          {item.place.name}
-                        </p>
-                        {item.endTime ? (
-                          <p className="text-[12px] text-neutral-500">
-                            Selesai {item.endTime}
-                          </p>
-                        ) : null}
-                      </div>
-                    </div>
-                  ))}
-                  {day.items.length > 4 ? (
-                    <p className="px-4 py-2.5 text-[12px] font-medium text-teal-700">
-                      +{day.items.length - 4} tempat lainnya
-                    </p>
-                  ) : null}
-                </div>
-              ) : (
-                <p className="px-4 py-5 text-[13px] text-neutral-500">
-                  Belum ada tempat untuk hari ini.
-                </p>
-              )}
-            </Card>
-          ))}
-        </div>
+        <TripDayOverview
+          days={trip.days.map((day) => ({
+            id: day.id,
+            date: day.date.toISOString(),
+            items: day.items.map((item) => ({
+              id: item.id,
+              startTime: item.startTime,
+              endTime: item.endTime,
+              note: item.note,
+              place: item.place,
+            })),
+          }))}
+        />
       </section>
 
       <section className="mt-8 flex flex-col gap-3">

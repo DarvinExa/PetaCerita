@@ -12,7 +12,16 @@ export async function getTripDetail(tripId: string) {
           items: {
             orderBy: [{ startTime: "asc" }, { order: "asc" }],
             include: {
-              place: { select: { name: true, lat: true, lng: true } },
+              place: {
+                select: {
+                  name: true,
+                  address: true,
+                  note: true,
+                  lat: true,
+                  lng: true,
+                  googleMapsUrl: true,
+                },
+              },
             },
           },
         },
