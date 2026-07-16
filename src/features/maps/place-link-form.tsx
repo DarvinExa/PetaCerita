@@ -67,7 +67,10 @@ export function PlaceLinkForm({
       notify({ tone: "danger", title: res.error });
       return;
     }
-    notify({ tone: "success", title: `${resolved.name} ditambahkan ke Bucket` });
+    notify({
+      tone: "success",
+      title: `${resolved.name} ditambahkan ke Bucket`,
+    });
     onDone();
   }
 
@@ -104,7 +107,10 @@ export function PlaceLinkForm({
       {resolved ? (
         <div className="rounded-md border border-neutral-200 bg-neutral-50/60 p-3">
           <div className="flex items-start gap-2">
-            <MapPin className="mt-0.5 size-4 shrink-0 text-teal-600" aria-hidden />
+            <MapPin
+              className="mt-0.5 size-4 shrink-0 text-teal-600"
+              aria-hidden
+            />
             <div className="min-w-0">
               <p className="truncate text-[15px] font-medium text-neutral-900">
                 {resolved.name}

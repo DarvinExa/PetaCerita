@@ -38,7 +38,8 @@ async function expandShortLink(url: string): Promise<string> {
  */
 export async function resolveGmapsLink(link: string): Promise<ResolveResult> {
   const raw = (link ?? "").trim().slice(0, 2048);
-  if (!raw) return { status: "error", message: "Tempel link Google Maps dulu." };
+  if (!raw)
+    return { status: "error", message: "Tempel link Google Maps dulu." };
   if (!isGmapsLink(raw)) {
     return {
       status: "error",
@@ -53,7 +54,10 @@ export async function resolveGmapsLink(link: string): Promise<ResolveResult> {
     parsed = parseGmapsLink(expanded);
   }
   if (!parsed) {
-    return { status: "error", message: "Link tidak bisa dibaca. Coba link lain." };
+    return {
+      status: "error",
+      message: "Link tidak bisa dibaca. Coba link lain.",
+    };
   }
 
   let { lat, lng } = parsed;
