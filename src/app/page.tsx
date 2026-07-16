@@ -58,14 +58,6 @@ export default function HomePage() {
         <div className="hidden" aria-hidden />
         <div className="hidden" aria-hidden />
         <div className="relative z-10">
-          <div className="mb-7 inline-flex -rotate-1 items-center gap-2.5">
-            <span className="doodle-box-alt flex size-11 items-center justify-center bg-sand-100 text-slate-800 sm:size-12">
-              <MapTrifold className="size-7" weight="bold" aria-hidden />
-            </span>
-            <span className="highlighter-yellow px-2 py-0.5 text-[22px] font-extrabold leading-none text-slate-900 sm:text-[26px]">
-              PetCer
-            </span>
-          </div>
           <h1 className="scribble-underline max-w-3xl text-[44px] font-extrabold leading-none tracking-[-0.045em] text-slate-900 sm:text-[56px]">
             PetaCerita
           </h1>
@@ -266,9 +258,8 @@ export default function HomePage() {
 
       <footer className="border-t border-white/80 bg-white/70">
         <div className="mx-auto flex max-w-[1240px] flex-col items-center justify-between gap-4 px-5 py-8 text-sm font-bold text-slate-500 sm:flex-row lg:px-8">
-          <Link href="/" className="flex items-center gap-2 text-teal-800">
-            <MapTrifold className="size-5" weight="bold" />
-            PetCer
+          <Link href="/" className="font-extrabold text-teal-800">
+            PetaCerita
           </Link>
           <p>Karena setiap rencana perjalanan akan menghasilkan cerita baru.</p>
         </div>
