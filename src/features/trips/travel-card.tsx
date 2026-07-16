@@ -187,11 +187,12 @@ function drawTravelCard(canvas: HTMLCanvasElement, data: TravelCardData) {
   ctx.moveTo(816, 475);
   ctx.bezierCurveTo(890, 410, 975, 550, 1135, 455);
   ctx.stroke();
-  for (const [x, y] of [
+  const decorDots: Array<[number, number]> = [
     [816, 475],
     [955, 486],
     [1135, 455],
-  ]) {
+  ];
+  for (const [x, y] of decorDots) {
     ctx.fillStyle = "#C98A38";
     ctx.beginPath();
     ctx.arc(x, y, 7, 0, Math.PI * 2);
