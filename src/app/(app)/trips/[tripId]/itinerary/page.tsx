@@ -47,6 +47,7 @@ export default async function ItineraryPage({
       address: item.place.address,
       lat: item.place.lat,
       lng: item.place.lng,
+      googleMapsUrl: item.place.googleMapsUrl,
     },
   }));
 
@@ -68,8 +69,8 @@ export default async function ItineraryPage({
           Itinerary
         </h1>
         <p className="mt-1 text-[14px] text-neutral-600">
-          {trip.name} - susun rencana dengan menggeser tempat dari Bucket ke
-          setiap hari.
+          {trip.name} - kumpulkan ide, pilih harinya, lalu susun urutan
+          kunjungan dengan lebih ringkas.
         </p>
       </div>
 

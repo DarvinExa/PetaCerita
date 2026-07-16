@@ -1,21 +1,13 @@
 "use client";
 
-import { MapPin, Path, WarningCircle } from "@phosphor-icons/react";
-import { Badge } from "@/components/ui/badge";
+import { Path, WarningCircle } from "@phosphor-icons/react";
 import {
   distanceLevel,
   formatDistanceKm,
-  nearestPoint,
   routeSegments,
   totalHaversineKm,
   type GeoPoint,
 } from "./distance";
-
-export type DayPointGroup = {
-  id: string;
-  label: string;
-  points: GeoPoint[];
-};
 
 export function DayDistanceSummary({ points }: { points: GeoPoint[] }) {
   const segments = routeSegments(points);
@@ -56,76 +48,6 @@ export function DayDistanceSummary({ points }: { points: GeoPoint[] }) {
           </span>
         </div>
       ))}
-    </div>
-  );
-}
-
-export function BucketDistanceInsights({
-  candidates,
-  days,
-}: {
-  candidates: GeoPoint[];
-  days: DayPointGroup[];
-}) {
-  const scheduled = days.filter((day) => day.points.length > 0);
-  if (candidates.length === 0 || scheduled.length === 0) return null;
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h3 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
-        Kecocokan kandidat
-      </h3>
-      {candidates.map((candidate) => {
-        const options = scheduled
-          .map((day) => {
-            const nearest = nearestPoint(candidate, day.points);
-            return nearest ? { day, ...nearest } : null;
-          })
-          .filter((option): option is NonNullable<typeof option> =>
-            Boolean(option),
-          )
-          .sort((a, b) => a.distanceKm - b.distanceKm);
-        const best = options[0];
-        if (!best) return null;
-        const level = distanceLevel(best.distanceKm);
-        return (
-          <div
-            key={candidate.id}
-            className="rounded-md border border-neutral-200 bg-white px-2.5 py-2"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <span className="inline-flex min-w-0 items-center gap-1.5 text-[12px] font-medium text-neutral-800">
-                <MapPin
-                  className="size-3.5 shrink-0 text-neutral-400"
-                  aria-hidden
-                />
-                <span className="truncate">{candidate.name}</span>
-              </span>
-              <Badge
-                variant={
-                  level === "NEAR"
-                    ? "success"
-                    : level === "MEDIUM"
-                      ? "warning"
-                      : "danger"
-                }
-                className="shrink-0"
-              >
-                {formatDistanceKm(best.distanceKm)}
-              </Badge>
-            </div>
-            <p className="mt-1 text-[11px] leading-4 text-neutral-500">
-              Paling dekat dengan {best.day.label}, sekitar {best.point.name}.
-              {level === "FAR"
-                ? " Kandidat ini jauh dari rute yang sudah ada."
-                : ""}
-            </p>
-          </div>
-        );
-      })}
-      <p className="text-[11px] leading-4 text-neutral-400">
-        Jarak dihitung garis lurus. Waktu dan jarak berkendara dapat berbeda.
-      </p>
     </div>
   );
 }

@@ -173,6 +173,7 @@ model Place {
   photoUrls     String[]
   lat           Float?
   lng           Float?
+  googleMapsUrl String?
   createdById   String            @db.Uuid
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt

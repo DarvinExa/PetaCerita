@@ -13,6 +13,7 @@ type Resolved = {
   address: string | null;
   lat: number | null;
   lng: number | null;
+  googleMapsUrl: string;
 };
 
 /**
@@ -61,6 +62,7 @@ export function PlaceLinkForm({
       address: resolved.address,
       lat: resolved.lat,
       lng: resolved.lng,
+      googleMapsUrl: resolved.googleMapsUrl,
     });
     setSaving(false);
     if (res && "error" in res) {
@@ -124,6 +126,9 @@ export function PlaceLinkForm({
                   Alamat tidak terdeteksi
                 </p>
               )}
+              <p className="mt-1 text-[12px] leading-5 text-teal-700">
+                Link asli disimpan untuk foto, ulasan, dan detail tempat.
+              </p>
             </div>
             <button
               type="button"

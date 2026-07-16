@@ -22,6 +22,7 @@ export type MapPoint = {
   address: string | null;
   lat: number;
   lng: number;
+  googleMapsUrl?: string | null;
   label?: string;
   targetId?: string;
 };
@@ -147,6 +148,7 @@ export function TripMapInner({
               ) : null}
               <a
                 href={googleMapsUrl({
+                  sourceUrl: point.googleMapsUrl,
                   lat: point.lat,
                   lng: point.lng,
                   name: point.name,

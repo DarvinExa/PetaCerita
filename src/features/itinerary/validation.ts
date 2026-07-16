@@ -78,5 +78,6 @@ export const attachPlaceSchema = z.object({
   address: z.string().trim().max(300).nullish(),
   lat: z.number().min(-90).max(90).nullish(),
   lng: z.number().min(-180).max(180).nullish(),
+  googleMapsUrl: z.string().trim().url().max(2048),
   note: z.string().trim().max(1000).optional().or(z.literal("")),
 });

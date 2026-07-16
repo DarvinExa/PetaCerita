@@ -5,6 +5,7 @@ import { googleMapsUrl } from "./gmaps-url";
 describe("isGmapsLink", () => {
   it("mengenali berbagai host Google Maps", () => {
     expect(isGmapsLink("https://www.google.com/maps/place/Tugu")).toBe(true);
+    expect(isGmapsLink("https://maps.google.com/?q=Tugu")).toBe(true);
     expect(isGmapsLink("https://maps.app.goo.gl/abc123")).toBe(true);
     expect(isGmapsLink("https://goo.gl/maps/xyz")).toBe(true);
     expect(isGmapsLink("Tugu Jogja")).toBe(false);
@@ -50,6 +51,14 @@ describe("parseGmapsLink", () => {
     expect(r?.lng).toBeCloseTo(110.37);
   });
 
+  it("memprioritaskan koordinat listing di atas pusat viewport", () => {
+    const r = parseGmapsLink(
+      "https://www.google.com/maps/place/X/@-7.7000,110.3000,13z/data=!3d-7.7956!4d110.3695",
+    );
+    expect(r?.lat).toBeCloseTo(-7.7956);
+    expect(r?.lng).toBeCloseTo(110.3695);
+  });
+
   it("link pendek dikenali tapi tanpa data koordinat/nama", () => {
     const r = parseGmapsLink("https://maps.app.goo.gl/abc123");
     expect(r).toEqual({ lat: null, lng: null, query: null });
@@ -69,6 +78,13 @@ describe("parseGmapsLink", () => {
 });
 
 describe("googleMapsUrl", () => {
+  it("mempertahankan link Google Maps sumber", () => {
+    const sourceUrl = "https://maps.app.goo.gl/abc123";
+    expect(googleMapsUrl({ sourceUrl, lat: -7.79, lng: 110.37 })).toBe(
+      sourceUrl,
+    );
+  });
+
   it("pakai koordinat bila tersedia", () => {
     expect(googleMapsUrl({ lat: -7.79, lng: 110.37 })).toBe(
       "https://www.google.com/maps/search/?api=1&query=-7.79,110.37",

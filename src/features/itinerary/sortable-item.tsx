@@ -100,6 +100,7 @@ export function SortableItem({
       {item.place.lat !== null && item.place.lng !== null ? (
         <a
           href={googleMapsUrl({
+            sourceUrl: item.place.googleMapsUrl,
             lat: item.place.lat,
             lng: item.place.lng,
             name: item.place.name,

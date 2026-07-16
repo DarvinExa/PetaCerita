@@ -13,11 +13,22 @@ export interface ParsedGmapsLink {
   query: string | null;
 }
 
-/** Longgar: cukup terlihat seperti URL Google Maps. */
+/** Validasi host resmi Google Maps agar link sumber aman dibuka kembali. */
 export function isGmapsLink(input: string): boolean {
-  return /(?:google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(
-    input.trim(),
-  );
+  try {
+    const url = new URL(input.trim());
+    if (url.protocol !== "https:" && url.protocol !== "http:") return false;
+    const host = url.hostname.toLowerCase();
+    if (host === "maps.app.goo.gl") return true;
+    if (host === "goo.gl") return url.pathname.startsWith("/maps");
+    const googleHost = /^(?:www\.|maps\.)?google\.[a-z.]+$/.test(host);
+    return (
+      googleHost &&
+      (host.startsWith("maps.") || url.pathname.startsWith("/maps"))
+    );
+  } catch {
+    return false;
+  }
 }
 
 function parseLatLng(pair: string): { lat: number; lng: number } | null {
@@ -49,13 +60,26 @@ export function parseGmapsLink(input: string): ParsedGmapsLink | null {
   let lng: number | null = null;
   let query: string | null = null;
 
-  // Koordinat setelah "@": .../@-7.7956,110.3695,15z
-  const at = raw.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (at?.[1] && at[2]) {
-    const p = parseLatLng(`${at[1]},${at[2]}`);
+  // !3d/!4d adalah koordinat listing tempat yang sebenarnya. Token @ pada
+  // URL Google Maps sering hanya pusat viewport, jadi jangan memprioritaskannya.
+  const exact = raw.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+  if (exact?.[1] && exact[2]) {
+    const p = parseLatLng(`${exact[1]},${exact[2]}`);
     if (p) {
       lat = p.lat;
       lng = p.lng;
+    }
+  }
+
+  // Fallback pusat peta bila URL memang tidak membawa koordinat listing.
+  if (lat === null) {
+    const at = raw.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+    if (at?.[1] && at[2]) {
+      const p = parseLatLng(`${at[1]},${at[2]}`);
+      if (p) {
+        lat = p.lat;
+        lng = p.lng;
+      }
     }
   }
 
@@ -73,15 +97,6 @@ export function parseGmapsLink(input: string): ParsedGmapsLink | null {
         lng ??= coord.lng;
       } else {
         query = cleanPlaceName(q);
-      }
-    }
-    // !3d<lat>!4d<lng> pada URL berbentuk data.
-    const d = raw.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
-    if (d?.[1] && d[2] && lat === null) {
-      const p = parseLatLng(`${d[1]},${d[2]}`);
-      if (p) {
-        lat = p.lat;
-        lng = p.lng;
       }
     }
   } catch {

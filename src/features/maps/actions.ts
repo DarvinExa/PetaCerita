@@ -16,6 +16,7 @@ export type ResolveResult =
         address: string | null;
         lat: number | null;
         lng: number | null;
+        googleMapsUrl: string;
       };
     }
   | { status: "error"; message: string };
@@ -89,7 +90,10 @@ export async function resolveGmapsLink(link: string): Promise<ResolveResult> {
     };
   }
 
-  return { status: "ok", place: { name, address, lat, lng } };
+  return {
+    status: "ok",
+    place: { name, address, lat, lng, googleMapsUrl: raw },
+  };
 }
 
 export type AttachState = { error: string } | { ok: true } | null;
@@ -106,13 +110,19 @@ export async function attachPlaceFromLink(input: {
   address?: string | null;
   lat?: number | null;
   lng?: number | null;
+  googleMapsUrl: string;
   note?: string;
 }): Promise<AttachState> {
   const parsed = attachPlaceSchema.safeParse(input);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Input tidak valid" };
   }
-  const { tripId, category, name, address, lat, lng, note } = parsed.data;
+  const { tripId, category, name, address, lat, lng, googleMapsUrl, note } =
+    parsed.data;
+
+  if (!isGmapsLink(googleMapsUrl)) {
+    return { error: "Link sumber bukan Google Maps yang valid." };
+  }
 
   try {
     const member = await requireTripMember(tripId);
@@ -131,6 +141,7 @@ export async function attachPlaceFromLink(input: {
         note: note || null,
         lat: lat ?? null,
         lng: lng ?? null,
+        googleMapsUrl,
         createdById: member.userId,
         items: {
           create: { tripId, category, order: nextOrder(bucket) },

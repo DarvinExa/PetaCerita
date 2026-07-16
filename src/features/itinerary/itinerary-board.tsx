@@ -1,57 +1,54 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
   KeyboardSensor,
-  closestCorners,
+  PointerSensor,
+  closestCenter,
   useSensor,
   useSensors,
-  type DragStartEvent,
-  type DragOverEvent,
   type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { Lightbulb, CalendarBlank } from "@phosphor-icons/react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  CalendarBlank,
+  CaretLeft,
+  CaretRight,
+  Lightbulb,
+} from "@phosphor-icons/react";
 import { useToast } from "@/components/ui/toast";
-import { moveItem } from "./actions";
-import { BoardColumn } from "./board-column";
-import { DayTimeline } from "./day-timeline";
-import { SortableItem } from "./sortable-item";
-import { EditItemDialog } from "./edit-item-dialog";
-import { AddPlaceForm } from "./add-place-form";
 import { useTripRealtime } from "@/features/realtime/use-trip-realtime";
 import { TripMap } from "@/features/maps/trip-map";
 import type { MapPoint } from "@/features/maps/trip-map-inner";
-import {
-  BucketDistanceInsights,
-  DayDistanceSummary,
-  type DayPointGroup,
-} from "@/features/maps/distance-insights";
-import type { GeoPoint } from "@/features/maps/distance";
+import { DayDistanceSummary } from "@/features/maps/distance-insights";
+import { nearestPoint, type GeoPoint } from "@/features/maps/distance";
+import { moveItem } from "./actions";
+import { BucketIdeaCard, type BucketDayChoice } from "./bucket-idea-card";
+import { CompactDayAgenda } from "./compact-day-agenda";
+import { SortableItem } from "./sortable-item";
+import { AddPlaceForm } from "./add-place-form";
+import { EditItemDialog } from "./edit-item-dialog";
 import { BUCKET_ID, containerOf, type BoardDay, type BoardItem } from "./types";
 
 type Containers = Record<string, string[]>;
 
-/** Bangun map kontainer -> daftar itemId terurut, dari daftar item mentah. */
 function groupItems(items: BoardItem[], dayIds: string[]): Containers {
-  const map: Containers = { [BUCKET_ID]: [] };
-  for (const id of dayIds) map[id] = [];
+  const grouped: Containers = { [BUCKET_ID]: [] };
+  for (const id of dayIds) grouped[id] = [];
   const sorted = [...items].sort((a, b) => a.order - b.order);
   for (const item of sorted) {
     const key = containerOf(item.dayId);
-    (map[key] ??= []).push(item.id);
+    (grouped[key] ??= []).push(item.id);
   }
-  return map;
+  return grouped;
 }
 
-/** Kunci identitas untuk mendeteksi perubahan data dari server. */
 function signature(items: BoardItem[]): string {
   return items
-    .map((i) => `${i.id}:${i.dayId ?? "_"}:${i.order}`)
+    .map((item) => `${item.id}:${item.dayId ?? "_"}:${item.order}`)
     .sort()
     .join("|");
 }
@@ -68,21 +65,16 @@ export function ItineraryBoard({
   items: BoardItem[];
 }) {
   const { notify } = useToast();
-  const [, startTransition] = useTransition();
-
-  // Segarkan papan saat anggota lain mengubah itinerary trip ini.
+  const [savingOrder, startOrderTransition] = useTransition();
   useTripRealtime(tripId, "itinerary");
 
-  const dayIds = useMemo(() => days.map((d) => d.id), [days]);
+  const dayIds = useMemo(() => days.map((day) => day.id), [days]);
   const itemsById = useMemo(() => {
     const map = new Map<string, BoardItem>();
     for (const item of items) map.set(item.id, item);
     return map;
   }, [items]);
 
-  // State kontainer optimistis. Disinkronkan ulang saat data server berubah
-  // (mis. setelah revalidate): pola "adjust state on prop change" dari React,
-  // membandingkan signature data lama vs baru selama render.
   const [containers, setContainers] = useState<Containers>(() =>
     groupItems(items, dayIds),
   );
@@ -93,8 +85,18 @@ export function ItineraryBoard({
     setContainers(groupItems(items, dayIds));
   }
 
+  const [activeDayId, setActiveDayId] = useState<string | null>(
+    days[0]?.id ?? null,
+  );
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editing, setEditing] = useState<BoardItem | null>(null);
+  const [schedulingId, setSchedulingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!days.some((day) => day.id === activeDayId)) {
+      setActiveDayId(days[0]?.id ?? null);
+    }
+  }, [activeDayId, days]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -102,107 +104,6 @@ export function ItineraryBoard({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
-  /** Cari kontainer yang memuat sebuah id (item) atau id kontainer itu sendiri. */
-  function findContainer(id: string): string | undefined {
-    if (id in containers) return id;
-    return Object.keys(containers).find((key) =>
-      (containers[key] ?? []).includes(id),
-    );
-  }
-
-  function handleDragStart(event: DragStartEvent) {
-    setActiveId(String(event.active.id));
-  }
-
-  /** Pindahkan item antar kontainer secara live saat digeser melewati batas. */
-  function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event;
-    if (!over) return;
-    const activeItemId = String(active.id);
-    const overId = String(over.id);
-
-    const from = findContainer(activeItemId);
-    const to = findContainer(overId);
-    if (!from || !to || from === to) return;
-
-    setContainers((prev) => {
-      const fromItems = (prev[from] ?? []).filter((id) => id !== activeItemId);
-      const toItems = [...(prev[to] ?? [])];
-      // Sisipkan sebelum item yang sedang di-hover, atau di akhir bila hover
-      // langsung di area kontainer kosong.
-      const overIndex = toItems.indexOf(overId);
-      const insertAt = overIndex >= 0 ? overIndex : toItems.length;
-      toItems.splice(insertAt, 0, activeItemId);
-      return { ...prev, [from]: fromItems, [to]: toItems };
-    });
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    setActiveId(null);
-    if (!over) return;
-
-    const activeItemId = String(active.id);
-    const overId = String(over.id);
-    const to = findContainer(overId);
-    if (!to) return;
-
-    // Hitung state akhir secara sinkron. Jangan membaca nilai yang diubah dari
-    // callback setState karena callback dapat berjalan setelah persist dimulai.
-    const toItems = containers[to] ?? [];
-    const oldIndex = toItems.indexOf(activeItemId);
-    const overIndex =
-      overId === to ? toItems.length - 1 : toItems.indexOf(overId);
-    const finalContainers =
-      oldIndex !== -1 && overIndex !== -1 && oldIndex !== overIndex
-        ? { ...containers, [to]: arrayMove(toItems, oldIndex, overIndex) }
-        : containers;
-    setContainers(finalContainers);
-
-    const toIndex = (finalContainers[to] ?? []).indexOf(activeItemId);
-    const toDayId = to === BUCKET_ID ? null : to;
-    if (toIndex < 0) return;
-
-    // Persist. Bila gagal, kembalikan ke keadaan server dan beri tahu.
-    startTransition(async () => {
-      const result = await moveItem({
-        tripId,
-        itemId: activeItemId,
-        toDayId,
-        toIndex,
-      });
-      if (result?.error) {
-        notify({ tone: "danger", title: result.error });
-        setContainers(groupItems(items, dayIds));
-      }
-    });
-  }
-
-  function renderColumn(containerId: string, emptyLabel: string) {
-    const columnItems = itemsFor(containerId);
-    return (
-      <BoardColumn
-        containerId={containerId}
-        items={columnItems}
-        currency={currency}
-        emptyLabel={emptyLabel}
-        onEdit={setEditing}
-      />
-    );
-  }
-
-  function renderTimeline(containerId: string) {
-    const timelineItems = itemsFor(containerId);
-    return (
-      <DayTimeline
-        containerId={containerId}
-        items={timelineItems}
-        currency={currency}
-        onEdit={setEditing}
-      />
-    );
-  }
 
   function itemsFor(containerId: string): BoardItem[] {
     return (containers[containerId] ?? [])
@@ -230,9 +131,95 @@ export function ItineraryBoard({
         address: item.place.address,
         lat: item.place.lat as number,
         lng: item.place.lng as number,
+        googleMapsUrl: item.place.googleMapsUrl,
         label: String(index + 1),
         targetId: `itinerary-item-${item.id}`,
       }));
+  }
+
+  function findContainer(itemId: string): string | undefined {
+    return Object.keys(containers).find((key) =>
+      (containers[key] ?? []).includes(itemId),
+    );
+  }
+
+  async function scheduleIdea(itemId: string, dayId: string) {
+    if (schedulingId || !dayIds.includes(dayId)) return;
+    const from = findContainer(itemId);
+    if (!from || from !== BUCKET_ID) return;
+
+    const previous = containers;
+    const destination = containers[dayId] ?? [];
+    const next = {
+      ...containers,
+      [BUCKET_ID]: (containers[BUCKET_ID] ?? []).filter((id) => id !== itemId),
+      [dayId]: [...destination, itemId],
+    };
+    setContainers(next);
+    setSchedulingId(itemId);
+
+    try {
+      const result = await moveItem({
+        tripId,
+        itemId,
+        toDayId: dayId,
+        toIndex: destination.length,
+      });
+      if (result?.error) {
+        setContainers(previous);
+        notify({ tone: "danger", title: result.error });
+        return;
+      }
+      setActiveDayId(dayId);
+      notify({ tone: "success", title: "Tempat ditambahkan ke jadwal." });
+    } catch {
+      setContainers(previous);
+      notify({ tone: "danger", title: "Gagal memindahkan tempat. Coba lagi." });
+    } finally {
+      setSchedulingId(null);
+    }
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    const itemId = String(event.active.id);
+    if (activeDayId && (containers[activeDayId] ?? []).includes(itemId)) {
+      setActiveId(itemId);
+    }
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    setActiveId(null);
+    if (!activeDayId || !event.over) return;
+
+    const itemId = String(event.active.id);
+    const overId = String(event.over.id);
+    const current = containers[activeDayId] ?? [];
+    const oldIndex = current.indexOf(itemId);
+    const overIndex =
+      overId === activeDayId ? current.length - 1 : current.indexOf(overId);
+    if (oldIndex < 0 || overIndex < 0 || oldIndex === overIndex) return;
+
+    const previous = containers;
+    const reordered = arrayMove(current, oldIndex, overIndex);
+    setContainers({ ...containers, [activeDayId]: reordered });
+
+    startOrderTransition(async () => {
+      try {
+        const result = await moveItem({
+          tripId,
+          itemId,
+          toDayId: activeDayId,
+          toIndex: overIndex,
+        });
+        if (result?.error) {
+          setContainers(previous);
+          notify({ tone: "danger", title: result.error });
+        }
+      } catch {
+        setContainers(previous);
+        notify({ tone: "danger", title: "Urutan gagal disimpan. Coba lagi." });
+      }
+    });
   }
 
   const dayFmt = new Intl.DateTimeFormat("id-ID", {
@@ -241,148 +228,248 @@ export function ItineraryBoard({
     month: "short",
     timeZone: "UTC",
   });
+  const fullDayFmt = new Intl.DateTimeFormat("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 
-  const activeItem = activeId ? itemsById.get(activeId) : null;
-  const bucketMapPoints = mapPointsFor(BUCKET_ID);
-  const bucketGeoPoints = geoPointsFor(BUCKET_ID);
-  const dayPointGroups: DayPointGroup[] = days.map((day, index) => ({
+  const dayPointGroups = days.map((day, index) => ({
     id: day.id,
     label: `Hari ${index + 1}, ${dayFmt.format(day.date)}`,
     points: geoPointsFor(day.id),
   }));
 
+  function choicesFor(item: BoardItem): BucketDayChoice[] {
+    const candidate =
+      item.place.lat !== null && item.place.lng !== null
+        ? {
+            id: item.id,
+            name: item.place.name,
+            lat: item.place.lat,
+            lng: item.place.lng,
+          }
+        : null;
+
+    return dayPointGroups.map((day) => {
+      const nearest = candidate ? nearestPoint(candidate, day.points) : null;
+      return {
+        id: day.id,
+        label: day.label,
+        distanceKm: nearest?.distanceKm ?? null,
+        nearestPlace: nearest?.point.name ?? null,
+      };
+    });
+  }
+
+  const bucketItems = itemsFor(BUCKET_ID);
+  const activeDayIndex = days.findIndex((day) => day.id === activeDayId);
+  const activeDay = activeDayIndex >= 0 ? days[activeDayIndex] : null;
+  const activeDayItems = activeDay ? itemsFor(activeDay.id) : [];
+  const activeDayMapPoints = activeDay ? mapPointsFor(activeDay.id) : [];
+  const activeDayGeoPoints = activeDay ? geoPointsFor(activeDay.id) : [];
+  const activeItem = activeId ? itemsById.get(activeId) : null;
+
   const bucketPanel = (
-    <section className="flex flex-col gap-3 lg:self-start">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
-          <Lightbulb className="size-4" aria-hidden />
-          Bucket Ide
-        </h2>
-        <AddPlaceForm tripId={tripId} />
-      </div>
-      <div className="rounded-lg border border-neutral-200 bg-white p-2 shadow-sm">
-        {renderColumn(
-          BUCKET_ID,
-          "Belum ada kandidat. Tambah tempat, lalu geser ke hari.",
-        )}
-      </div>
-      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-3 shadow-sm">
+    <section className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-24 lg:self-start">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h3 className="text-[12px] font-semibold text-neutral-800">
-            Peta kandidat
-          </h3>
-          <p className="mt-0.5 text-[11px] leading-4 text-neutral-500">
-            Bandingkan posisi kandidat dengan rute harian yang sudah disusun.
+          <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-600">
+            <Lightbulb className="size-4 text-sand-500" aria-hidden />
+            Bucket Ide
+          </h2>
+          <p className="mt-1 text-[12px] leading-5 text-neutral-500">
+            Kumpulkan tempat, lihat saran jarak, lalu pilih harinya.
           </p>
         </div>
-        <TripMap
-          points={bucketMapPoints}
-          emptyLabel="Kandidat dengan koordinat akan muncul di peta ini."
-        />
-        <BucketDistanceInsights
-          candidates={bucketGeoPoints}
-          days={dayPointGroups}
-        />
+        <AddPlaceForm tripId={tripId} />
+      </div>
+
+      <div className="rounded-lg border border-neutral-200 bg-neutral-50/80 p-2 shadow-sm">
+        <div className="mb-2 flex items-center justify-between px-1 py-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+            {bucketItems.length} ide tersimpan
+          </span>
+          <span className="text-[11px] text-neutral-400">Tanpa drag</span>
+        </div>
+        {bucketItems.length > 0 ? (
+          <div className="flex max-h-[680px] flex-col gap-2 overflow-y-auto pr-1">
+            {bucketItems.map((item) => (
+              <BucketIdeaCard
+                key={item.id}
+                item={item}
+                currency={currency}
+                days={choicesFor(item)}
+                pending={schedulingId === item.id}
+                onSchedule={scheduleIdea}
+                onEdit={setEditing}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex min-h-40 flex-col items-center justify-center rounded-md border border-dashed border-neutral-300 bg-white px-4 text-center">
+            <Lightbulb className="size-7 text-neutral-300" aria-hidden />
+            <p className="mt-2 text-[13px] font-medium text-neutral-700">
+              Belum ada ide tempat
+            </p>
+            <p className="mt-1 text-[12px] leading-5 text-neutral-500">
+              Tambahkan tempat dari link Google Maps atau isi manual.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
 
   const daysPanel = (
-    <section className="flex flex-col gap-3">
-      <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
-        <CalendarBlank className="size-4" aria-hidden />
-        Jadwal harian
-      </h2>
-      <div className="flex flex-col gap-5">
-        {days.map((day, index) => {
-          const dayMapPoints = mapPointsFor(day.id);
-          const dayGeoPoints = geoPointsFor(day.id);
-          return (
+    <section className="min-w-0">
+      <div className="mb-3">
+        <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-600">
+          <CalendarBlank className="size-4 text-teal-700" aria-hidden />
+          Jadwal harian
+        </h2>
+        <p className="mt-1 text-[12px] leading-5 text-neutral-500">
+          Satu hari dalam satu fokus. Gunakan panah atau pilih tanggal langsung.
+        </p>
+      </div>
+
+      {activeDay ? (
+        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-sm">
+          <div className="border-b border-neutral-200 bg-white p-3 sm:p-4">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveDayId(days[activeDayIndex - 1]?.id ?? null)
+                }
+                disabled={activeDayIndex <= 0}
+                aria-label="Hari sebelumnya"
+                className="flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-200 text-neutral-600 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
+              >
+                <CaretLeft className="size-4" aria-hidden />
+              </button>
+
+              <div className="min-w-0 flex-1 text-center" aria-live="polite">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-teal-700">
+                  Hari {activeDayIndex + 1} dari {days.length}
+                </p>
+                <p className="mt-0.5 truncate text-[16px] font-semibold capitalize text-neutral-900 sm:text-[18px]">
+                  {fullDayFmt.format(activeDay.date)}
+                </p>
+                <p className="mt-0.5 text-[11px] text-neutral-500">
+                  {activeDayItems.length} tempat terjadwal
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveDayId(days[activeDayIndex + 1]?.id ?? null)
+                }
+                disabled={activeDayIndex >= days.length - 1}
+                aria-label="Hari berikutnya"
+                className="flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-200 text-neutral-600 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
+              >
+                <CaretRight className="size-4" aria-hidden />
+              </button>
+            </div>
+
             <div
-              key={day.id}
-              className="overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50 p-3 shadow-sm sm:p-4"
+              className="mt-3 flex gap-2 overflow-x-auto pb-1"
+              role="tablist"
+              aria-label="Pilih hari perjalanan"
             >
-              <div className="mb-3 flex items-center justify-between gap-3 px-1">
-                <div className="flex items-center gap-3">
-                  <span className="flex size-9 items-center justify-center rounded-md bg-teal-800 text-[13px] font-bold tabular-nums text-white">
-                    {index + 1}
-                  </span>
-                  <div>
-                    <span className="block text-[12px] font-semibold uppercase tracking-[0.08em] text-teal-700">
+              {days.map((day, index) => {
+                const selected = day.id === activeDay.id;
+                return (
+                  <button
+                    key={day.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => setActiveDayId(day.id)}
+                    className={
+                      selected
+                        ? "min-h-11 shrink-0 rounded-md bg-teal-800 px-3 text-left text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+                        : "min-h-11 shrink-0 rounded-md border border-neutral-200 bg-white px-3 text-left text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                    }
+                  >
+                    <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] opacity-75">
                       Hari {index + 1}
                     </span>
-                    <span className="block text-[14px] font-semibold text-neutral-900">
+                    <span className="mt-0.5 block text-[12px] font-semibold capitalize">
                       {dayFmt.format(day.date)}
                     </span>
-                  </div>
-                </div>
-                <span className="rounded-md bg-white px-2 py-1 text-[12px] font-medium text-neutral-500 shadow-sm">
-                  {(containers[day.id] ?? []).length} tempat
-                </span>
-              </div>
-              <div className="mb-3 grid gap-3 xl:grid-cols-[minmax(0,1fr)_240px]">
-                <TripMap
-                  points={dayMapPoints}
-                  showPath
-                  emptyLabel="Tempat berkoordinat pada hari ini akan muncul sebagai rute."
-                />
-                <div className="rounded-md border border-neutral-200 bg-white p-3">
-                  <h3 className="mb-2 text-[12px] font-semibold text-neutral-800">
-                    Ringkasan jarak
-                  </h3>
-                  <DayDistanceSummary points={dayGeoPoints} />
-                </div>
-              </div>
-              {renderTimeline(day.id)}
+                  </button>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+          </div>
+
+          <div className="flex flex-col gap-3 p-3 sm:p-4">
+            <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_250px]">
+              <TripMap
+                points={activeDayMapPoints}
+                showPath
+                emptyLabel="Tempat berkoordinat pada hari ini akan muncul sebagai rute."
+              />
+              <div className="rounded-lg border border-neutral-200 bg-white p-3">
+                <h3 className="mb-2 text-[12px] font-semibold text-neutral-800">
+                  Ringkasan rute
+                </h3>
+                <DayDistanceSummary points={activeDayGeoPoints} />
+              </div>
+            </div>
+
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={() => setActiveId(null)}
+            >
+              <CompactDayAgenda
+                containerId={activeDay.id}
+                items={activeDayItems}
+                currency={currency}
+                onEdit={setEditing}
+              />
+              <DragOverlay>
+                {activeItem ? (
+                  <div className="w-[min(480px,calc(100vw-32px))]">
+                    <SortableItem
+                      item={activeItem}
+                      currency={currency}
+                      onEdit={() => {}}
+                    />
+                  </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+
+            <p className="sr-only" aria-live="polite">
+              {savingOrder
+                ? "Menyimpan urutan agenda"
+                : "Urutan agenda tersimpan"}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center text-[13px] text-neutral-500">
+          Belum ada hari perjalanan.
+        </div>
+      )}
     </section>
   );
 
   return (
     <>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-        onDragCancel={() => setActiveId(null)}
-      >
-        {/* Desktop: dua panel berdampingan. */}
-        <div className="hidden gap-6 lg:grid lg:grid-cols-[minmax(280px,360px)_1fr]">
-          {bucketPanel}
-          {daysPanel}
-        </div>
-
-        {/* Mobile: tab bertumpuk. */}
-        <div className="lg:hidden">
-          <Tabs defaultValue="bucket">
-            <TabsList className="w-full">
-              <TabsTrigger value="bucket" className="flex-1">
-                Bucket Ide
-              </TabsTrigger>
-              <TabsTrigger value="days" className="flex-1">
-                Jadwal
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="bucket">{bucketPanel}</TabsContent>
-            <TabsContent value="days">{daysPanel}</TabsContent>
-          </Tabs>
-        </div>
-
-        <DragOverlay>
-          {activeItem ? (
-            <SortableItem
-              item={activeItem}
-              currency={currency}
-              onEdit={() => {}}
-            />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(300px,370px)_minmax(0,1fr)]">
+        {bucketPanel}
+        {daysPanel}
+      </div>
 
       <EditItemDialog
         item={editing}

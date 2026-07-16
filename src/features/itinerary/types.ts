@@ -26,6 +26,7 @@ export type BoardItem = {
     address: string | null;
     lat: number | null;
     lng: number | null;
+    googleMapsUrl: string | null;
   };
 };
 

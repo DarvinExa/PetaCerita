@@ -28,6 +28,7 @@ export async function getItineraryBoard(tripId: string) {
             address: true,
             lat: true,
             lng: true,
+            googleMapsUrl: true,
           },
         },
       },
