@@ -1,4 +1,4 @@
-# PetaCerita
+# Peta Cerita (PetCer)
 
 PetaCerita is a collaborative travel planning application for organizing itineraries, collecting destination ideas, viewing daily routes, managing budgets, and splitting expenses with friends in one shared trip space.
 
