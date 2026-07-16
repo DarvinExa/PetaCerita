@@ -24,7 +24,7 @@ function SaveBudgetButton() {
     <button
       type="submit"
       aria-label="Simpan estimasi"
-      className="inline-flex h-10 items-center justify-center rounded-md border border-neutral-200 bg-white px-3 text-neutral-600 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:opacity-50"
+      className="inline-flex h-10 items-center justify-center rounded-2xl border border-white/70 bg-white px-3 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:opacity-50"
       disabled={pending}
     >
       <Check className="size-4" aria-hidden />
@@ -78,7 +78,7 @@ export function BudgetPlanner({
         </div>
       </div>
 
-      <div className="flex flex-col divide-y divide-neutral-200 rounded-md border border-neutral-200 bg-white">
+      <div className="flex flex-col divide-y divide-neutral-200 rounded-2xl border border-white/70 bg-white">
         {BUDGET_CATEGORY_ORDER.map((cat) => {
           const row = rows.find((r) => r.category === cat) ?? {
             category: cat,

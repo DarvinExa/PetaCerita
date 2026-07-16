@@ -444,15 +444,15 @@ export function TravelCardButton({ data }: { data: TravelCardData }) {
         className="max-h-[92vh] max-w-4xl overflow-y-auto"
       >
         <div
-          className="mb-4 grid grid-cols-2 rounded-md border border-neutral-200 bg-neutral-100 p-1"
+          className="mb-4 grid grid-cols-2 rounded-2xl border border-white/70 bg-neutral-100 p-1"
           aria-label="Format kartu"
         >
           <button
             type="button"
             onClick={() => setMode("card")}
-            className={`min-h-11 rounded px-3 text-[13px] font-semibold transition-colors ${
+            className={`min-h-11 rounded px-3 text-[13px] font-semibold transition-all duration-300 ease-in-out ${
               mode === "card"
-                ? "bg-white text-neutral-900 shadow-sm"
+                ? "bg-white text-neutral-900 shadow-[0_10px_30px_rgba(15,118,110,0.08)]"
                 : "text-neutral-500 hover:text-neutral-800"
             }`}
             aria-pressed={mode === "card"}
@@ -462,9 +462,9 @@ export function TravelCardButton({ data }: { data: TravelCardData }) {
           <button
             type="button"
             onClick={() => setMode("overlay")}
-            className={`min-h-11 rounded px-3 text-[13px] font-semibold transition-colors ${
+            className={`min-h-11 rounded px-3 text-[13px] font-semibold transition-all duration-300 ease-in-out ${
               mode === "overlay"
-                ? "bg-white text-neutral-900 shadow-sm"
+                ? "bg-white text-neutral-900 shadow-[0_10px_30px_rgba(15,118,110,0.08)]"
                 : "text-neutral-500 hover:text-neutral-800"
             }`}
             aria-pressed={mode === "overlay"}
@@ -473,7 +473,7 @@ export function TravelCardButton({ data }: { data: TravelCardData }) {
           </button>
         </div>
         <div
-          className={`overflow-hidden rounded-md border border-neutral-200 ${
+          className={`overflow-hidden rounded-2xl border border-white/70 ${
             mode === "overlay" ? "bg-neutral-700" : "bg-neutral-100"
           }`}
         >

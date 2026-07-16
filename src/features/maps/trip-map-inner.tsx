@@ -108,7 +108,7 @@ export function TripMapInner({
       center={center}
       zoom={points.length > 1 ? 11 : 14}
       scrollWheelZoom={false}
-      className="relative z-0 h-[240px] w-full overflow-hidden rounded-md border border-neutral-200"
+      className="relative z-0 h-[240px] w-full overflow-hidden rounded-2xl border border-white/70"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

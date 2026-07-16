@@ -44,15 +44,15 @@ export function BucketIdeaCard({
     (item.place.lat !== null && item.place.lng !== null);
 
   return (
-    <article className="rounded-lg border border-neutral-200 bg-white p-3 shadow-sm transition-colors hover:border-neutral-300">
+    <article className="rounded-3xl border border-white/70 bg-white p-3 shadow-[0_10px_30px_rgba(15,118,110,0.08)] transition-all duration-300 ease-in-out hover:border-slate-200/70">
       <div className="flex items-start gap-2">
         <button
           type="button"
           onClick={() => onEdit(item)}
-          className="min-h-11 min-w-0 flex-1 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+          className="min-h-11 min-w-0 flex-1 rounded-2xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
         >
           <span className="flex items-center gap-2">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-500">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
               <Icon className="size-4" aria-hidden />
             </span>
             <span className="min-w-0">
@@ -93,7 +93,7 @@ export function BucketIdeaCard({
             rel="noopener noreferrer"
             aria-label={`Buka ${item.place.name} di Google Maps`}
             title="Buka link Google Maps asli"
-            className="flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-400 hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+            className="flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-400 hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
           >
             <MapPin className="size-4" aria-hidden />
           </a>
@@ -101,7 +101,7 @@ export function BucketIdeaCard({
       </div>
 
       {best ? (
-        <div className="mt-3 flex items-start gap-2 rounded-md bg-sand-50 px-2.5 py-2">
+        <div className="mt-3 flex items-start gap-2 rounded-2xl bg-sand-50 px-2.5 py-2">
           <Sparkle
             className="mt-0.5 size-4 shrink-0 text-sand-500"
             aria-hidden
@@ -147,7 +147,7 @@ export function BucketIdeaCard({
             const dayId = event.target.value;
             if (dayId) onSchedule(item.id, dayId);
           }}
-          className="min-h-11 w-full rounded-md border border-neutral-200 bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none transition-colors hover:border-neutral-300 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-11 w-full rounded-2xl border border-white/70 bg-white px-3 text-[14px] font-medium text-neutral-800 outline-none transition-all duration-300 ease-in-out hover:border-slate-200/70 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <option value="">
             {pending

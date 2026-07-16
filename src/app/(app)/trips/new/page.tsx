@@ -11,7 +11,7 @@ export default function NewTripPage() {
     <div className="mx-auto w-full max-w-[560px] flex-1 px-4 py-8">
       <Link
         href="/dashboard"
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-md text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-2xl text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
         <ArrowLeft className="size-4" aria-hidden />
         <span>Kembali ke dashboard</span>

@@ -71,7 +71,7 @@ function statusMeta(status: SettlementStatus) {
   return {
     label: "Belum dibayar",
     badge: "neutral" as const,
-    card: "border-neutral-200 bg-white",
+    card: "border-white/70 bg-white",
   };
 }
 
@@ -130,7 +130,7 @@ export function SettleUpPanel({
             return (
               <div
                 key={balance.memberId}
-                className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-3 py-2.5 shadow-sm"
+                className="flex items-center justify-between rounded-2xl border border-white/70 bg-white px-3 py-2.5 shadow-[0_10px_30px_rgba(15,118,110,0.08)]"
               >
                 <span className="text-[14px] font-medium text-neutral-900">
                   {balance.name}
@@ -167,7 +167,7 @@ export function SettleUpPanel({
         </div>
 
         {transfers.length === 0 ? (
-          <div className="rounded-md border border-dashed border-neutral-300 bg-white px-4 py-6 text-center">
+          <div className="rounded-2xl border border-dashed border-slate-200/70 bg-white px-4 py-6 text-center">
             <p className="text-[14px] text-neutral-600">
               Belum ada yang perlu ditransfer. Semua sudah imbang.
             </p>
@@ -182,7 +182,7 @@ export function SettleUpPanel({
               return (
                 <li
                   key={`${transfer.fromMemberId}:${transfer.toMemberId}`}
-                  className={`rounded-md border p-3 shadow-sm ${meta.card}`}
+                  className={`rounded-2xl border p-3 shadow-[0_10px_30px_rgba(15,118,110,0.08)] ${meta.card}`}
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -205,7 +205,7 @@ export function SettleUpPanel({
                     <Badge variant={meta.badge}>{meta.label}</Badge>
                   </div>
 
-                  <div className="mt-3 border-t border-neutral-200/70 pt-3">
+                  <div className="mt-3 border-t border-white/70/70 pt-3">
                     {transfer.status === "UNPAID" && isDebtor ? (
                       <Button
                         type="button"
@@ -284,12 +284,12 @@ export function SettleUpPanel({
                   </div>
 
                   {transfer.events.length > 0 ? (
-                    <details className="mt-3 border-t border-neutral-200/70 pt-2">
-                      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-md text-[12px] font-medium text-neutral-600 hover:text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
+                    <details className="mt-3 border-t border-white/70/70 pt-2">
+                      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-2xl text-[12px] font-medium text-neutral-600 hover:text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
                         <ClockCounterClockwise className="size-4" aria-hidden />
                         Riwayat status
                       </summary>
-                      <ol className="mt-2 flex flex-col gap-2 border-l border-neutral-200 pl-3">
+                      <ol className="mt-2 flex flex-col gap-2 border-l border-white/70 pl-3">
                         {transfer.events.map((event) => (
                           <li
                             key={event.id}

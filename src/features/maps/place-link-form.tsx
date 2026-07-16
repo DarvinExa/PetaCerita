@@ -107,7 +107,7 @@ export function PlaceLinkForm({
       </FormField>
 
       {resolved ? (
-        <div className="rounded-md border border-neutral-200 bg-neutral-50/60 p-3">
+        <div className="rounded-2xl border border-white/70 bg-neutral-50/60 p-3">
           <div className="flex items-start gap-2">
             <MapPin
               className="mt-0.5 size-4 shrink-0 text-teal-600"
@@ -133,7 +133,7 @@ export function PlaceLinkForm({
             <button
               type="button"
               onClick={check}
-              className="ml-auto flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+              className="ml-auto flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
               aria-label="Cek ulang link"
             >
               <ArrowClockwise className="size-4" aria-hidden />
@@ -147,7 +147,7 @@ export function PlaceLinkForm({
           id="link-category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="h-10 w-full rounded-md border border-neutral-200 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1"
+          className="h-10 w-full rounded-2xl border border-white/70 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1"
         >
           {CATEGORY_ORDER.map((key) => (
             <option key={key} value={key}>

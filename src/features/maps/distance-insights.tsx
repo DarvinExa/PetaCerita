@@ -26,7 +26,7 @@ export function DayDistanceSummary({ points }: { points: GeoPoint[] }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2 text-[12px] text-neutral-600">
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-sky-50 px-2 py-1 font-medium text-sky-500">
+        <span className="inline-flex items-center gap-1.5 rounded-2xl bg-sky-50 px-2 py-1 font-medium text-sky-500">
           <Path className="size-4" aria-hidden />
           Total garis lurus {formatDistanceKm(totalHaversineKm(points))}
         </span>
@@ -35,7 +35,7 @@ export function DayDistanceSummary({ points }: { points: GeoPoint[] }) {
       {warnings.map((segment) => (
         <div
           key={`${segment.from.id}:${segment.to.id}`}
-          className="flex gap-2 rounded-md border border-warning/25 bg-warning/5 px-2.5 py-2 text-[12px] leading-5 text-neutral-700"
+          className="flex gap-2 rounded-2xl border border-warning/25 bg-warning/5 px-2.5 py-2 text-[12px] leading-5 text-neutral-700"
         >
           <WarningCircle
             className="mt-0.5 size-4 shrink-0 text-warning"

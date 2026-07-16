@@ -14,9 +14,9 @@ export function TripCard({ trip }: { trip: TripCardData }) {
   return (
     <Link
       href={`/trips/${trip.id}`}
-      className="group block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+      className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
     >
-      <Card className="relative h-full overflow-hidden p-5 transition-[transform,box-shadow,border-color] group-hover:-translate-y-0.5 group-hover:border-teal-200 group-hover:shadow-md">
+      <Card className="relative h-full overflow-hidden p-5 transition-[transform,box-shadow,border-color] group-hover:-translate-y-0.5 group-hover:border-teal-200 group-hover:shadow-[0_18px_50px_rgba(15,118,110,0.12)]">
         <span
           className="absolute inset-y-0 left-0 w-1 bg-teal-600"
           aria-hidden
@@ -33,7 +33,7 @@ export function TripCard({ trip }: { trip: TripCardData }) {
           <div className="flex items-center gap-2">
             {trip.role === "OWNER" ? <Badge variant="teal">Owner</Badge> : null}
             <ArrowUpRight
-              className="size-4 text-neutral-300 transition-colors group-hover:text-teal-600"
+              className="size-4 text-neutral-300 transition-all duration-300 ease-in-out group-hover:text-teal-600"
               aria-hidden
             />
           </div>

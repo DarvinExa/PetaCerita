@@ -4,7 +4,7 @@ type BadgeVariant =
   "neutral" | "teal" | "success" | "warning" | "danger" | "info";
 
 const variantClasses: Record<BadgeVariant, string> = {
-  neutral: "bg-neutral-100 text-neutral-700 border-neutral-200",
+  neutral: "bg-neutral-100 text-neutral-700 border-white/70",
   teal: "bg-teal-50 text-teal-800 border-teal-200",
   success: "bg-white text-success border-success/30",
   warning: "bg-white text-warning border-warning/30",
@@ -24,7 +24,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-medium",
+        "inline-flex items-center rounded-full border border-white/70 px-3 py-1 text-[12px] font-extrabold shadow-[0_5px_14px_rgba(15,23,42,0.04)]",
         variantClasses[variant],
         className,
       )}

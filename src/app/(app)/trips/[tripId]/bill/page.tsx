@@ -75,7 +75,7 @@ export default async function BillPage({
       <TripRealtime tripId={tripId} scope="bill" />
       <Link
         href={`/trips/${tripId}`}
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-md text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-2xl text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
         <ArrowLeft className="size-4" aria-hidden />
         <span>Kembali ke trip</span>

@@ -171,7 +171,7 @@ export function CreateBillForm({
   }
 
   const selectClass =
-    "h-10 w-full rounded-md border border-neutral-200 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1";
+    "h-10 w-full rounded-2xl border border-white/70 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1";
 
   return (
     <Modal
@@ -267,7 +267,7 @@ export function CreateBillForm({
             {items.map((it) => (
               <div
                 key={it.key}
-                className="flex flex-col gap-3 rounded-md border border-neutral-200 bg-neutral-50 p-3"
+                className="flex flex-col gap-3 rounded-2xl border border-white/70 bg-neutral-50 p-3"
               >
                 <div className="flex items-start gap-2">
                   <div className="grid flex-1 grid-cols-[1fr_auto] gap-2">
@@ -298,7 +298,7 @@ export function CreateBillForm({
                         setItems((prev) => prev.filter((x) => x.key !== it.key))
                       }
                       aria-label="Hapus item"
-                      className="flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                      className="flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-500 hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                     >
                       <Trash className="size-4" aria-hidden />
                     </button>
@@ -312,7 +312,7 @@ export function CreateBillForm({
                     onChange={(e) =>
                       updateItem(it.key, { isShared: e.target.checked })
                     }
-                    className="size-4 rounded border-neutral-300 text-teal-600 focus-visible:ring-teal-600"
+                    className="size-4 rounded border-slate-200/70 text-teal-600 focus-visible:ring-teal-600"
                   />
                   <span>
                     Biaya bersama (pajak, parkir) - dibagi rata otomatis
@@ -335,7 +335,7 @@ export function CreateBillForm({
                             className={
                               active
                                 ? "inline-flex items-center gap-1 rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-[13px] text-teal-800"
-                                : "inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-white px-2.5 py-1 text-[13px] text-neutral-500"
+                                : "inline-flex items-center gap-1 rounded-full border border-white/70 bg-white px-2.5 py-1 text-[13px] text-neutral-500"
                             }
                             aria-pressed={active}
                           >
@@ -355,7 +355,7 @@ export function CreateBillForm({
             ))}
           </div>
 
-          <div className="flex items-center justify-between border-t border-neutral-200 pt-3">
+          <div className="flex items-center justify-between border-t border-white/70 pt-3">
             <span className="text-[15px] text-neutral-600">Total</span>
             <span className="text-[17px] font-semibold text-neutral-900 tabular-nums">
               {formatMoney(total, baseCurrency)}

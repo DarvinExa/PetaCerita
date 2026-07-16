@@ -9,7 +9,7 @@ const TripMapInner = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[240px] w-full items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-[13px] text-neutral-400">
+      <div className="flex h-[240px] w-full items-center justify-center rounded-2xl border border-white/70 bg-neutral-50 text-[13px] text-neutral-400">
         Memuat peta...
       </div>
     ),
@@ -27,7 +27,7 @@ export function TripMap({
 }) {
   if (points.length === 0) {
     return (
-      <div className="flex h-[180px] w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-neutral-300 bg-neutral-50 px-4 text-center">
+      <div className="flex h-[180px] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-200/70 bg-neutral-50 px-4 text-center">
         <MapTrifold className="size-7 text-neutral-300" aria-hidden />
         <p className="max-w-xs text-[12px] leading-5 text-neutral-500">
           {emptyLabel}

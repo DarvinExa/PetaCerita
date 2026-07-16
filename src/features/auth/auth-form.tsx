@@ -41,7 +41,7 @@ export function AuthForm({ mode, action, next, submitLabel }: AuthFormProps) {
       {state?.error ? (
         <div
           role="alert"
-          className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger/5 px-3 py-2.5 text-[13px] text-danger"
+          className="flex items-start gap-2 rounded-2xl border border-danger/30 bg-danger/5 px-3 py-2.5 text-[13px] text-danger"
         >
           <Warning className="mt-0.5 size-4 shrink-0" aria-hidden />
           <span>{state.error}</span>

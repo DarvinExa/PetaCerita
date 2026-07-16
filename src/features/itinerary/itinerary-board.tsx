@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -91,12 +91,9 @@ export function ItineraryBoard({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [editing, setEditing] = useState<BoardItem | null>(null);
   const [schedulingId, setSchedulingId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!days.some((day) => day.id === activeDayId)) {
-      setActiveDayId(days[0]?.id ?? null);
-    }
-  }, [activeDayId, days]);
+  const selectedDayId = days.some((day) => day.id === activeDayId)
+    ? activeDayId
+    : (days[0]?.id ?? null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -182,33 +179,33 @@ export function ItineraryBoard({
 
   function handleDragStart(event: DragStartEvent) {
     const itemId = String(event.active.id);
-    if (activeDayId && (containers[activeDayId] ?? []).includes(itemId)) {
+    if (selectedDayId && (containers[selectedDayId] ?? []).includes(itemId)) {
       setActiveId(itemId);
     }
   }
 
   function handleDragEnd(event: DragEndEvent) {
     setActiveId(null);
-    if (!activeDayId || !event.over) return;
+    if (!selectedDayId || !event.over) return;
 
     const itemId = String(event.active.id);
     const overId = String(event.over.id);
-    const current = containers[activeDayId] ?? [];
+    const current = containers[selectedDayId] ?? [];
     const oldIndex = current.indexOf(itemId);
     const overIndex =
-      overId === activeDayId ? current.length - 1 : current.indexOf(overId);
+      overId === selectedDayId ? current.length - 1 : current.indexOf(overId);
     if (oldIndex < 0 || overIndex < 0 || oldIndex === overIndex) return;
 
     const previous = containers;
     const reordered = arrayMove(current, oldIndex, overIndex);
-    setContainers({ ...containers, [activeDayId]: reordered });
+    setContainers({ ...containers, [selectedDayId]: reordered });
 
     startOrderTransition(async () => {
       try {
         const result = await moveItem({
           tripId,
           itemId,
-          toDayId: activeDayId,
+          toDayId: selectedDayId,
           toIndex: overIndex,
         });
         if (result?.error) {
@@ -265,7 +262,7 @@ export function ItineraryBoard({
   }
 
   const bucketItems = itemsFor(BUCKET_ID);
-  const activeDayIndex = days.findIndex((day) => day.id === activeDayId);
+  const activeDayIndex = days.findIndex((day) => day.id === selectedDayId);
   const activeDay = activeDayIndex >= 0 ? days[activeDayIndex] : null;
   const activeDayItems = activeDay ? itemsFor(activeDay.id) : [];
   const activeDayMapPoints = activeDay ? mapPointsFor(activeDay.id) : [];
@@ -287,7 +284,7 @@ export function ItineraryBoard({
         <AddPlaceForm tripId={tripId} />
       </div>
 
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50/80 p-2 shadow-sm">
+      <div className="rounded-3xl border border-white/70 bg-neutral-50/80 p-2 shadow-[0_10px_30px_rgba(15,118,110,0.08)]">
         <div className="mb-2 flex items-center justify-between px-1 py-1">
           <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
             {bucketItems.length} ide tersimpan
@@ -309,7 +306,7 @@ export function ItineraryBoard({
             ))}
           </div>
         ) : (
-          <div className="flex min-h-40 flex-col items-center justify-center rounded-md border border-dashed border-neutral-300 bg-white px-4 text-center">
+          <div className="flex min-h-40 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200/70 bg-white px-4 text-center">
             <Lightbulb className="size-7 text-neutral-300" aria-hidden />
             <p className="mt-2 text-[13px] font-medium text-neutral-700">
               Belum ada ide tempat
@@ -336,8 +333,8 @@ export function ItineraryBoard({
       </div>
 
       {activeDay ? (
-        <div className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 shadow-sm">
-          <div className="border-b border-neutral-200 bg-white p-3 sm:p-4">
+        <div className="overflow-hidden rounded-xl border border-white/70 bg-neutral-50 shadow-[0_10px_30px_rgba(15,118,110,0.08)]">
+          <div className="border-b border-white/70 bg-white p-3 sm:p-4">
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -346,7 +343,7 @@ export function ItineraryBoard({
                 }
                 disabled={activeDayIndex <= 0}
                 aria-label="Hari sebelumnya"
-                className="flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-200 text-neutral-600 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
+                className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-white/70 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <CaretLeft className="size-4" aria-hidden />
               </button>
@@ -370,7 +367,7 @@ export function ItineraryBoard({
                 }
                 disabled={activeDayIndex >= days.length - 1}
                 aria-label="Hari berikutnya"
-                className="flex size-11 shrink-0 items-center justify-center rounded-md border border-neutral-200 text-neutral-600 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
+                className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-white/70 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <CaretRight className="size-4" aria-hidden />
               </button>
@@ -392,8 +389,8 @@ export function ItineraryBoard({
                     onClick={() => setActiveDayId(day.id)}
                     className={
                       selected
-                        ? "min-h-11 shrink-0 rounded-md bg-teal-800 px-3 text-left text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
-                        : "min-h-11 shrink-0 rounded-md border border-neutral-200 bg-white px-3 text-left text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                        ? "min-h-11 shrink-0 rounded-2xl bg-teal-800 px-3 text-left text-white shadow-[0_10px_30px_rgba(15,118,110,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+                        : "min-h-11 shrink-0 rounded-2xl border border-white/70 bg-white px-3 text-left text-neutral-600 hover:border-slate-200/70 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                     }
                   >
                     <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] opacity-75">
@@ -415,7 +412,7 @@ export function ItineraryBoard({
                 showPath
                 emptyLabel="Tempat berkoordinat pada hari ini akan muncul sebagai rute."
               />
-              <div className="rounded-lg border border-neutral-200 bg-white p-3">
+              <div className="rounded-3xl border border-white/70 bg-white p-3">
                 <h3 className="mb-2 text-[12px] font-semibold text-neutral-800">
                   Ringkasan rute
                 </h3>
@@ -457,7 +454,7 @@ export function ItineraryBoard({
           </div>
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center text-[13px] text-neutral-500">
+        <div className="rounded-3xl border border-dashed border-slate-200/70 bg-neutral-50 p-8 text-center text-[13px] text-neutral-500">
           Belum ada hari perjalanan.
         </div>
       )}
