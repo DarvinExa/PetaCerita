@@ -6,12 +6,14 @@ import {
   MapPin,
   CalendarBlank,
   UsersThree,
+  MapTrifold,
 } from "@phosphor-icons/react/dist/ssr";
 import { requireTripMember, PermissionError } from "@/server/permissions";
 import { getTripDetail } from "@/features/trips/trip-detail-queries";
 import { getTripInvite } from "@/features/invites/queries";
 import { InvitePanel } from "@/features/invites/invite-panel";
 import { MemberList, type MemberRow } from "@/features/invites/member-list";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDateRange } from "@/lib/dates";
@@ -87,6 +89,14 @@ export default async function TripDetailPage({
             {formatDateRange(trip.startDate, trip.endDate)}
           </span>
           <Badge variant="neutral">{trip.baseCurrency}</Badge>
+        </div>
+        <div className="mt-4">
+          <Button asChild variant="primary" size="md">
+            <Link href={`/trips/${tripId}/itinerary`}>
+              <MapTrifold className="size-5" aria-hidden />
+              <span>Buka itinerary</span>
+            </Link>
+          </Button>
         </div>
       </div>
 

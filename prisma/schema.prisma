@@ -23,6 +23,15 @@ enum JoinMethod {
   INVITE_LINK // gabung lewat shareable link
 }
 
+// Kategori tempat dan item itinerary (PRD 5.2).
+enum ItineraryCategory {
+  ALAM
+  ENTERTAIN
+  KULINER
+  PENGINAPAN
+  TRANSPORT
+}
+
 // User selaras dengan Supabase Auth: User.id = auth user UID.
 // Row di-upsert dari sesi terverifikasi saat login (lihat src/server/auth.ts).
 model User {
@@ -51,10 +60,12 @@ model Trip {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  owner   User         @relation("TripOwner", fields: [ownerId], references: [id])
-  members TripMember[]
-  days    Day[]
-  invites TripInvite[]
+  owner          User            @relation("TripOwner", fields: [ownerId], references: [id])
+  members        TripMember[]
+  days           Day[]
+  invites        TripInvite[]
+  places         Place[]
+  itineraryItems ItineraryItem[]
 
   @@index([ownerId])
   @@map("trips")
@@ -103,10 +114,67 @@ model Day {
   date   DateTime @db.Date
   order  Int
 
-  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip  Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  items ItineraryItem[]
 
   // Satu tanggal unik per trip; order untuk urutan tampil.
   @@unique([tripId, date])
   @@index([tripId, order])
   @@map("days")
+}
+
+// Tempat kandidat dalam sebuah trip. Pada M3 diisi manual (nama, kategori,
+// alamat, catatan). Kolom Google (googlePlaceId, rating, photoUrls, lat, lng)
+// sengaja nullable agar M4 bisa mengisinya lewat Places API tanpa migrasi
+// skema atau migrasi data. Biaya perkiraan ada di ItineraryItem, bukan di sini.
+model Place {
+  id            String            @id @default(uuid()) @db.Uuid
+  tripId        String            @db.Uuid
+  name          String
+  category      ItineraryCategory
+  address       String?
+  note          String?
+  googlePlaceId String?
+  rating        Float?
+  photoUrls     String[]
+  lat           Float?
+  lng           Float?
+  createdById   String            @db.Uuid
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  trip  Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  items ItineraryItem[]
+
+  @@index([tripId])
+  @@map("places")
+}
+
+// Satu entri itinerary. dayId null berarti masih di Bucket Ide (belum
+// dijadwalkan). Waktu disimpan sebagai string "HH:MM" agar bebas timezone,
+// selaras dengan pendekatan date-only di src/lib/dates.ts. estimatedCost
+// disimpan sebagai integer minor unit (rupiah utuh), bukan float, sesuai
+// aturan keamanan uang. order menentukan urutan dalam Bucket atau dalam hari.
+model ItineraryItem {
+  id            String            @id @default(uuid()) @db.Uuid
+  tripId        String            @db.Uuid
+  dayId         String?           @db.Uuid
+  placeId       String            @db.Uuid
+  startTime     String?
+  endTime       String?
+  category      ItineraryCategory
+  note          String?
+  estimatedCost Int?
+  order         Int
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  trip  Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  day   Day?   @relation(fields: [dayId], references: [id], onDelete: SetNull)
+  place Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@index([dayId, order])
+  @@index([placeId])
+  @@map("itinerary_items")
 }
