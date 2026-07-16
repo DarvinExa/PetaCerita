@@ -7,6 +7,7 @@ import {
   CalendarBlank,
   UsersThree,
   MapTrifold,
+  Receipt,
 } from "@phosphor-icons/react/dist/ssr";
 import { requireTripMember, PermissionError } from "@/server/permissions";
 import { getTripDetail } from "@/features/trips/trip-detail-queries";
@@ -90,11 +91,17 @@ export default async function TripDetailPage({
           </span>
           <Badge variant="neutral">{trip.baseCurrency}</Badge>
         </div>
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-2">
           <Button asChild variant="primary" size="md">
             <Link href={`/trips/${tripId}/itinerary`}>
               <MapTrifold className="size-5" aria-hidden />
               <span>Buka itinerary</span>
+            </Link>
+          </Button>
+          <Button asChild variant="secondary" size="md">
+            <Link href={`/trips/${tripId}/bill`}>
+              <Receipt className="size-5" aria-hidden />
+              <span>Budget dan bill</span>
             </Link>
           </Button>
         </div>
