@@ -161,7 +161,7 @@ export async function moveItem(input: {
 
     const item = await prisma.itineraryItem.findUnique({
       where: { id: itemId },
-      select: { tripId: true },
+      select: { tripId: true, dayId: true },
     });
     if (!item || item.tripId !== tripId) {
       return { error: "Item tidak ditemukan" };
