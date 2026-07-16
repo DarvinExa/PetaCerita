@@ -32,6 +32,24 @@ enum ItineraryCategory {
   TRANSPORT
 }
 
+// Kategori budget planner (PRD 5.4). Terpisah dari ItineraryCategory karena
+// sudut pandangnya biaya, bukan jenis tempat.
+enum BudgetCategory {
+  TRANSPORT
+  PENGINAPAN
+  MAKAN
+  TIKET
+  LAINNYA
+}
+
+// Status penyelesaian utang (PRD 8). PENDING dipakai di Fase 2 (konfirmasi dua
+// arah); MVP hanya UNPAID -> CONFIRMED lewat "mark as paid" oleh payer.
+enum SettlementStatus {
+  UNPAID
+  PENDING
+  CONFIRMED
+}
+
 // User selaras dengan Supabase Auth: User.id = auth user UID.
 // Row di-upsert dari sesi terverifikasi saat login (lihat src/server/auth.ts).
 model User {
@@ -66,6 +84,9 @@ model Trip {
   invites        TripInvite[]
   places         Place[]
   itineraryItems ItineraryItem[]
+  expenses       Expense[]
+  settlements    Settlement[]
+  budgetPlans    BudgetPlan[]
 
   @@index([ownerId])
   @@map("trips")
@@ -101,6 +122,11 @@ model TripMember {
 
   trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  paidExpenses    Expense[]          @relation("ExpensePayer")
+  itemShares      ExpenseItemShare[]
+  settlementsFrom Settlement[]       @relation("SettlementFrom")
+  settlementsTo   Settlement[]       @relation("SettlementTo")
 
   // Satu user hanya boleh sekali jadi anggota per trip.
   @@unique([tripId, userId])
@@ -169,12 +195,124 @@ model ItineraryItem {
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
 
-  trip  Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
-  day   Day?   @relation(fields: [dayId], references: [id], onDelete: SetNull)
-  place Place  @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  trip  Trip  @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  day   Day?  @relation(fields: [dayId], references: [id], onDelete: SetNull)
+  place Place @relation(fields: [placeId], references: [id], onDelete: Cascade)
 
   @@index([tripId])
   @@index([dayId, order])
   @@index([placeId])
   @@map("itinerary_items")
+}
+
+// Sebuah bill/tagihan (PRD 5.5). Payer adalah anggota yang membayar di depan;
+// peserta lain berutang ke payer lewat share tiap item. Total bill TIDAK
+// disimpan: diturunkan dari jumlah item agar tidak pernah drift dari detailnya.
+//
+// Multi-currency: amount tiap item disimpan dalam `currency` (integer minor
+// unit). Untuk netting semua dikonversi ke base currency trip memakai
+// `exchangeRateToBase` (1 unit currency = N unit base) yang dicatat saat bill
+// dibuat, sesuai keputusan PRD (kurs manual, tersimpan per expense).
+model Expense {
+  id                 String          @id @default(uuid()) @db.Uuid
+  tripId             String          @db.Uuid
+  payerId            String          @db.Uuid
+  title              String
+  date               DateTime        @db.Date
+  currency           String          @default("IDR")
+  // Kurs ke base currency trip. Decimal (bukan float) agar konversi presisi.
+  // Bernilai 1 jika currency == baseCurrency trip.
+  exchangeRateToBase Decimal         @default(1) @db.Decimal(18, 8)
+  budgetCategory     BudgetCategory?
+  createdById        String          @db.Uuid
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  trip  Trip          @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  payer TripMember    @relation("ExpensePayer", fields: [payerId], references: [id], onDelete: Cascade)
+  items ExpenseItem[]
+
+  @@index([tripId])
+  @@index([payerId])
+  @@map("expenses")
+}
+
+// Satu item dalam bill (mis. satu menu). `amount` integer minor unit dalam
+// currency expense induk. `isShared` menandai biaya bersama (pajak, service,
+// parkir) yang dibagi rata ke semua peserta bill, bukan per-item assignment.
+model ExpenseItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  expenseId String   @db.Uuid
+  name      String
+  amount    Int
+  isShared  Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  expense Expense            @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  shares  ExpenseItemShare[]
+
+  @@index([expenseId])
+  @@map("expense_items")
+}
+
+// Bagian seorang anggota atas sebuah item (PRD 8). `shareAmount` integer minor
+// unit dalam currency expense; jumlah seluruh share satu item == amount item
+// (dijaga di lapisan aplikasi lewat distribusi sisa/largest remainder). Default
+// rata di antara peserta item, tapi bisa di-override manual.
+model ExpenseItemShare {
+  id            String @id @default(uuid()) @db.Uuid
+  expenseItemId String @db.Uuid
+  memberId      String @db.Uuid
+  shareAmount   Int
+
+  item   ExpenseItem @relation(fields: [expenseItemId], references: [id], onDelete: Cascade)
+  member TripMember  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  // Satu baris share per anggota per item.
+  @@unique([expenseItemId, memberId])
+  @@index([memberId])
+  @@map("expense_item_shares")
+}
+
+// Transfer hasil netting antar anggota (PRD 8). Dihitung dari akumulasi semua
+// bill di halaman Settle Up; baris disimpan agar status "mark as paid" persist.
+// `amount` integer minor unit dalam base currency trip.
+model Settlement {
+  id           String           @id @default(uuid()) @db.Uuid
+  tripId       String           @db.Uuid
+  fromMemberId String           @db.Uuid
+  toMemberId   String           @db.Uuid
+  amount       Int
+  status       SettlementStatus @default(UNPAID)
+  settledAt    DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  trip Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  from TripMember @relation("SettlementFrom", fields: [fromMemberId], references: [id], onDelete: Cascade)
+  to   TripMember @relation("SettlementTo", fields: [toMemberId], references: [id], onDelete: Cascade)
+
+  // Satu baris arah pembayaran per pasangan anggota per trip.
+  @@unique([tripId, fromMemberId, toMemberId])
+  @@index([tripId])
+  @@map("settlements")
+}
+
+// Estimasi budget per kategori (PRD 5.4). `amount` integer minor unit dalam
+// base currency trip. Realisasi TIDAK disimpan: dihitung dari expense.
+model BudgetPlan {
+  id        String         @id @default(uuid()) @db.Uuid
+  tripId    String         @db.Uuid
+  category  BudgetCategory
+  amount    Int
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  // Satu baris estimasi per kategori per trip.
+  @@unique([tripId, category])
+  @@index([tripId])
+  @@map("budget_plans")
 }
