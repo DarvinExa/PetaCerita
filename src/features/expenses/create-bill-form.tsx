@@ -278,6 +278,7 @@ export function CreateBillForm({
                       }
                       maxLength={120}
                       placeholder="Nama item"
+                      aria-label="Nama item"
                     />
                     <Input
                       value={it.amount}
