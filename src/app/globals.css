@@ -1,77 +1,80 @@
 @import "tailwindcss";
 
-/*
-  Design tokens PetaCerita. Sumber tunggal kebenaran untuk warna, radius, dan
-  tipografi. Ikuti DESIGN.md. Teal adalah aksen, bukan cat tembok.
-*/
 @theme {
-  /* Brand / Primary (Teal) */
-  --color-teal-50: #f0fdfa;
-  --color-teal-100: #ccfbf1;
-  --color-teal-200: #99f6e4;
-  --color-teal-300: #5eead4;
-  --color-teal-400: #2dd4bf;
-  --color-teal-500: #14b8a6;
-  --color-teal-600: #0d9488;
-  --color-teal-700: #0f766e;
-  --color-teal-800: #115e59;
-  --color-teal-900: #134e4a;
-
-  /* Netral (Warm Gray) */
-  --color-neutral-50: #fafaf9;
-  --color-neutral-100: #f5f5f4;
-  --color-neutral-200: #e7e5e4;
-  --color-neutral-300: #d6d3d1;
-  --color-neutral-400: #a8a29e;
-  --color-neutral-500: #78716c;
-  --color-neutral-600: #57534e;
-  --color-neutral-700: #44403c;
-  --color-neutral-800: #292524;
-  --color-neutral-900: #1c1917;
-
-  /* Semantik. Hanya untuk status, bukan dekorasi. */
-  --color-success: #15803d;
-  --color-warning: #b45309;
-  --color-danger: #b91c1c;
-  --color-info: #1d4ed8;
-
-  /* Aksen perjalanan. Bukan warna status atau aksi utama. */
-  --color-sand-50: #fffaf0;
-  --color-sand-100: #fdf0d5;
-  --color-sand-200: #f5d9a8;
-  --color-sand-500: #95621f;
-  --color-sky-50: #f0f9ff;
-  --color-sky-100: #dff2fe;
-  --color-sky-500: #1f6f8b;
-  --color-coral-50: #fff4f1;
-  --color-coral-100: #ffe3dc;
-  --color-coral-500: #a94f40;
-
-  /* Radius */
-  --radius-sm: 14px;
-  --radius-md: 20px;
-  --radius-lg: 28px;
+  --color-teal-50: #effcf8;
+  --color-teal-100: #c9f4e5;
+  --color-teal-200: #93e8cf;
+  --color-teal-300: #5bd5b4;
+  --color-teal-400: #2dbb98;
+  --color-teal-500: #15977b;
+  --color-teal-600: #0d7b66;
+  --color-teal-700: #0b6254;
+  --color-teal-800: #104f45;
+  --color-teal-900: #123f39;
+  --color-neutral-50: #fdfbf7;
+  --color-neutral-100: #f4f1e9;
+  --color-neutral-200: #ded9ce;
+  --color-neutral-300: #c7c0b3;
+  --color-neutral-400: #908a80;
+  --color-neutral-500: #6b665f;
+  --color-neutral-600: #4b4742;
+  --color-neutral-700: #363330;
+  --color-neutral-800: #252321;
+  --color-neutral-900: #1a202c;
+  --color-success: #287a51;
+  --color-warning: #a65c17;
+  --color-danger: #b73838;
+  --color-info: #275ea8;
+  --color-sand-50: #fffdf0;
+  --color-sand-100: #fff6ad;
+  --color-sand-200: #f7df63;
+  --color-sand-500: #7d5b0d;
+  --color-sky-50: #f0f8ff;
+  --color-sky-100: #cfe8ff;
+  --color-sky-500: #275ea8;
+  --color-coral-50: #fff5f2;
+  --color-coral-100: #ffd9cf;
+  --color-coral-500: #a74737;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --radius-full: 9999px;
-
-  /* Font */
-  --font-sans: var(--font-nunito), ui-rounded, system-ui, sans-serif;
+  --font-sans: var(--font-kalam), cursive;
 }
 
 :root {
-  --background: #f7faf9;
-  --foreground: var(--color-neutral-900);
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  min-width: 320px;
-  text-rendering: optimizeLegibility;
+  --ink: #1a202c;
+  --paper: #fdfbf7;
+  --grid-line: rgba(116, 159, 201, 0.2);
+  --margin-line: rgba(220, 70, 70, 0.34);
+  --background: var(--paper);
+  --foreground: #2d3748;
 }
 
 html {
   scroll-padding-top: 5rem;
+}
+body {
+  min-width: 320px;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 30px 30px;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset-block: 0;
+  left: 34px;
+  z-index: -1;
+  width: 5px;
+  border-left: 2px solid var(--margin-line);
+  border-right: 2px solid var(--margin-line);
+  pointer-events: none;
 }
 
 button,
@@ -83,7 +86,159 @@ summary {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+h1,
+h2,
+h3 {
+  color: #1e293b;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+p {
+  line-height: 1.65;
+}
+svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+::selection {
+  background: #fff176;
+  color: var(--ink);
+}
+.app-canvas {
+  background: transparent;
+}
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
 
+.doodle-box {
+  border: 3px solid var(--ink) !important;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px !important;
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1) !important;
+}
+.doodle-box-alt {
+  border: 3px solid var(--ink) !important;
+  border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px !important;
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.08) !important;
+}
+.doodle-button {
+  position: relative;
+  border: 3px solid var(--ink) !important;
+  border-radius: 255px 25px 225px 25px / 25px 225px 25px 255px !important;
+  box-shadow: 2px 3px 0 rgba(26, 32, 44, 0.2) !important;
+  font-weight: 700 !important;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease !important;
+}
+.doodle-button:hover {
+  transform: scale(1.04) rotate(-1deg);
+  box-shadow: 4px 4px 0 var(--ink) !important;
+}
+.doodle-button:active {
+  transform: scale(0.96);
+  box-shadow: 1px 1px 0 var(--ink) !important;
+}
+.doodle-input {
+  border: 3px solid var(--ink) !important;
+  border-radius: 18px 255px 20px 225px / 225px 18px 255px 20px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 2px 3px 0 rgba(26, 32, 44, 0.08) !important;
+}
+.doodle-tag {
+  border: 2px solid var(--ink) !important;
+  border-radius: 44% 56% 48% 52% / 55% 43% 57% 45% !important;
+  font-weight: 700 !important;
+  box-shadow: 1px 2px 0 rgba(26, 32, 44, 0.1);
+}
+.highlighter-yellow {
+  background: linear-gradient(
+    104deg,
+    rgba(255, 250, 118, 0.72),
+    rgba(255, 226, 62, 0.82)
+  );
+  padding-inline: 0.18em;
+}
+.highlighter-green {
+  background: linear-gradient(
+    104deg,
+    rgba(167, 255, 163, 0.68),
+    rgba(101, 224, 113, 0.76)
+  );
+  padding-inline: 0.18em;
+}
+.highlighter-blue {
+  background: linear-gradient(
+    104deg,
+    rgba(174, 222, 255, 0.7),
+    rgba(112, 190, 247, 0.72)
+  );
+  padding-inline: 0.18em;
+}
+.doodle-lift {
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.doodle-lift:hover {
+  transform: rotate(0deg) scale(1.015) !important;
+  box-shadow: 6px 7px 0 rgba(26, 32, 44, 0.13) !important;
+}
+.tape {
+  position: relative;
+}
+.tape::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -13px;
+  left: 50%;
+  width: 72px;
+  height: 24px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(186, 220, 247, 0.68);
+  border-left: 1px dashed rgba(26, 32, 44, 0.22);
+  border-right: 1px dashed rgba(26, 32, 44, 0.22);
+}
+.scribble-underline {
+  position: relative;
+  display: inline-block;
+}
+.scribble-underline::after {
+  content: "";
+  position: absolute;
+  left: 1%;
+  right: -1%;
+  bottom: -0.15em;
+  height: 8px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 12'%3E%3Cpath d='M3 8 Q45 1 91 7 T217 6' fill='none' stroke='%23275ea8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")
+    center/100% 100% no-repeat;
+}
+.path-draw {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: doodle-draw 1.6s ease forwards;
+}
+@keyframes doodle-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  body::before {
+    left: 66px;
+  }
+}
 @media (max-width: 639px) {
   input,
   select,
@@ -92,40 +247,12 @@ summary {
     font-size: 16px;
   }
 }
-
 @media (forced-colors: active) {
   :focus-visible {
-    outline: 2px solid CanvasText;
+    outline: 3px solid CanvasText;
     outline-offset: 3px;
   }
 }
-
-::selection {
-  background: var(--color-teal-200);
-  color: var(--color-teal-900);
-}
-
-.app-canvas {
-  background-color: #f7faf9;
-  background-image:
-    radial-gradient(
-      circle at 8% 8%,
-      rgba(153, 246, 228, 0.26),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 92% 12%,
-      rgba(255, 227, 220, 0.34),
-      transparent 26%
-    ),
-    radial-gradient(
-      circle at 50% 95%,
-      rgba(223, 242, 254, 0.28),
-      transparent 30%
-    );
-  background-attachment: fixed;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -135,45 +262,12 @@ summary {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
-  .app-canvas {
-    background-image: none;
-  }
 }
 
-/* Angka uang rapi berkolom. */
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
+.doodle-sticker {
+  border-radius: 42% 58% 48% 52% / 55% 44% 56% 45% !important;
+  transform: rotate(-0.6deg);
 }
-
-/* Soft UI foundation */
-h1,
-h2,
-h3 {
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: #1e293b;
-}
-p {
-  line-height: 1.7;
-}
-svg {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.soft-surface {
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 18px 50px rgba(15, 118, 110, 0.09);
-  backdrop-filter: blur(18px);
-}
-.soft-lift {
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    filter 0.3s ease;
-}
-.soft-lift:hover {
-  transform: translateY(-3px) scale(1.015);
-  box-shadow: 0 22px 55px rgba(15, 118, 110, 0.14);
-  filter: brightness(1.015);
+.doodle-sticker:nth-child(even) {
+  transform: rotate(0.7deg);
 }

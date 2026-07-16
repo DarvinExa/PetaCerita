@@ -120,7 +120,7 @@ export function InvitePanel({
               value={inviteUrl}
               aria-label="Link undangan trip"
               onFocus={(e) => e.currentTarget.select()}
-              className="min-w-0 flex-1 rounded-2xl border border-white/70 bg-white px-3 text-[13px] text-neutral-700 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
+              className="min-w-0 flex-1 doodle-box-alt border border-white/70 bg-white px-3 text-[13px] text-neutral-700 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
             />
             <Button
               type="button"

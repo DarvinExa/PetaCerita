@@ -284,7 +284,7 @@ export function ItineraryBoard({
         <AddPlaceForm tripId={tripId} />
       </div>
 
-      <div className="rounded-3xl border border-white/70 bg-neutral-50/80 p-2 shadow-[0_10px_30px_rgba(15,118,110,0.08)]">
+      <div className="doodle-box border border-white/70 bg-neutral-50/80 p-2 shadow-[0_10px_30px_rgba(15,118,110,0.08)]">
         <div className="mb-2 flex items-center justify-between px-1 py-1">
           <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
             {bucketItems.length} ide tersimpan
@@ -306,7 +306,7 @@ export function ItineraryBoard({
             ))}
           </div>
         ) : (
-          <div className="flex min-h-40 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200/70 bg-white px-4 text-center">
+          <div className="flex min-h-40 flex-col items-center justify-center doodle-box-alt border border-dashed border-slate-200/70 bg-white px-4 text-center">
             <Lightbulb className="size-7 text-neutral-300" aria-hidden />
             <p className="mt-2 text-[13px] font-medium text-neutral-700">
               Belum ada ide tempat
@@ -333,7 +333,7 @@ export function ItineraryBoard({
       </div>
 
       {activeDay ? (
-        <div className="overflow-hidden rounded-xl border border-white/70 bg-neutral-50 shadow-[0_10px_30px_rgba(15,118,110,0.08)]">
+        <div className="overflow-hidden doodle-box-alt border border-white/70 bg-neutral-50 shadow-[0_10px_30px_rgba(15,118,110,0.08)]">
           <div className="border-b border-white/70 bg-white p-3 sm:p-4">
             <div className="flex items-center gap-2">
               <button
@@ -343,7 +343,7 @@ export function ItineraryBoard({
                 }
                 disabled={activeDayIndex <= 0}
                 aria-label="Hari sebelumnya"
-                className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-white/70 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
+                className="flex size-11 shrink-0 items-center justify-center doodle-box-alt border border-white/70 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <CaretLeft className="size-4" aria-hidden />
               </button>
@@ -367,7 +367,7 @@ export function ItineraryBoard({
                 }
                 disabled={activeDayIndex >= days.length - 1}
                 aria-label="Hari berikutnya"
-                className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-white/70 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
+                className="flex size-11 shrink-0 items-center justify-center doodle-box-alt border border-white/70 text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-35"
               >
                 <CaretRight className="size-4" aria-hidden />
               </button>
@@ -389,8 +389,8 @@ export function ItineraryBoard({
                     onClick={() => setActiveDayId(day.id)}
                     className={
                       selected
-                        ? "min-h-11 shrink-0 rounded-2xl bg-teal-800 px-3 text-left text-white shadow-[0_10px_30px_rgba(15,118,110,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
-                        : "min-h-11 shrink-0 rounded-2xl border border-white/70 bg-white px-3 text-left text-neutral-600 hover:border-slate-200/70 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                        ? "min-h-11 shrink-0 doodle-sticker bg-teal-800 px-3 text-left text-white shadow-[0_10px_30px_rgba(15,118,110,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+                        : "min-h-11 shrink-0 doodle-box-alt border border-white/70 bg-white px-3 text-left text-neutral-600 hover:border-slate-200/70 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                     }
                   >
                     <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] opacity-75">
@@ -412,7 +412,7 @@ export function ItineraryBoard({
                 showPath
                 emptyLabel="Tempat berkoordinat pada hari ini akan muncul sebagai rute."
               />
-              <div className="rounded-3xl border border-white/70 bg-white p-3">
+              <div className="doodle-box border border-white/70 bg-white p-3">
                 <h3 className="mb-2 text-[12px] font-semibold text-neutral-800">
                   Ringkasan rute
                 </h3>
@@ -454,7 +454,7 @@ export function ItineraryBoard({
           </div>
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-slate-200/70 bg-neutral-50 p-8 text-center text-[13px] text-neutral-500">
+        <div className="doodle-box border border-dashed border-slate-200/70 bg-neutral-50 p-8 text-center text-[13px] text-neutral-500">
           Belum ada hari perjalanan.
         </div>
       )}

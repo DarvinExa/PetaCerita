@@ -63,7 +63,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 }
               }}
               className={cn(
-                "flex items-start gap-3 rounded-2xl border border-white/70 bg-white p-4 shadow-[0_18px_50px_rgba(15,118,110,0.12)]",
+                "flex items-start gap-3 doodle-box-alt border border-white/70 bg-white p-4 shadow-[0_18px_50px_rgba(15,118,110,0.12)]",
                 "data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out",
               )}
             >
@@ -82,7 +82,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 ) : null}
               </div>
               <ToastPrimitive.Close
-                className="ml-auto flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                className="ml-auto flex size-11 shrink-0 items-center justify-center doodle-sticker text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 aria-label="Tutup"
               >
                 <X className="size-4" aria-hidden />

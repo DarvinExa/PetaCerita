@@ -6,10 +6,7 @@ export function Card({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "rounded-3xl border border-white/80 bg-white/90 shadow-[0_16px_45px_rgba(15,118,110,0.08)] backdrop-blur-sm",
-        className,
-      )}
+      className={cn("doodle-box doodle-lift bg-white", className)}
       {...props}
     />
   );

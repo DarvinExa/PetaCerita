@@ -13,7 +13,7 @@ export const TabsList = forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex items-center gap-1 border-b border-white/70",
+      "doodle-box-alt inline-flex items-center gap-1 border-b border-white/70",
       className,
     )}
     {...props}
@@ -28,7 +28,7 @@ export const TabsTrigger = forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "relative -mb-px min-h-11 touch-manipulation border-b-2 border-transparent px-3 py-2 text-[15px] font-medium text-neutral-600 transition-all duration-300 ease-in-out",
+      "doodle-button relative -mb-px min-h-11 touch-manipulation border-b-2 border-transparent px-3 py-2 text-[15px] font-medium text-neutral-600 transition-all duration-300 ease-in-out",
       "hover:text-neutral-900",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2",
       "data-[state=active]:border-teal-600 data-[state=active]:text-teal-800",

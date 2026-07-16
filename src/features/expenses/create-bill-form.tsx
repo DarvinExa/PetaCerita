@@ -171,7 +171,7 @@ export function CreateBillForm({
   }
 
   const selectClass =
-    "h-10 w-full rounded-2xl border border-white/70 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1";
+    "h-10 w-full doodle-box-alt border border-white/70 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1";
 
   return (
     <Modal
@@ -267,7 +267,7 @@ export function CreateBillForm({
             {items.map((it) => (
               <div
                 key={it.key}
-                className="flex flex-col gap-3 rounded-2xl border border-white/70 bg-neutral-50 p-3"
+                className="flex flex-col gap-3 doodle-box-alt border border-white/70 bg-neutral-50 p-3"
               >
                 <div className="flex items-start gap-2">
                   <div className="grid flex-1 grid-cols-[1fr_auto] gap-2">
@@ -298,7 +298,7 @@ export function CreateBillForm({
                         setItems((prev) => prev.filter((x) => x.key !== it.key))
                       }
                       aria-label="Hapus item"
-                      className="flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-500 hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                      className="flex size-11 shrink-0 items-center justify-center doodle-sticker text-neutral-500 hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                     >
                       <Trash className="size-4" aria-hidden />
                     </button>

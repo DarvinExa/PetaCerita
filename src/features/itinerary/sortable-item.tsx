@@ -51,14 +51,14 @@ export function SortableItem({
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
       className={cn(
-        "group flex items-start gap-2 rounded-2xl border border-white/70 bg-white p-3 shadow-[0_10px_30px_rgba(15,118,110,0.08)]",
+        "group flex items-start gap-2 doodle-box-alt border border-white/70 bg-white p-3 shadow-[0_10px_30px_rgba(15,118,110,0.08)]",
         isDragging && "opacity-50",
       )}
     >
       <button
         type="button"
         aria-label="Geser untuk memindahkan"
-        className="-ml-1 flex size-11 shrink-0 cursor-grab touch-none items-center justify-center rounded-2xl text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 active:cursor-grabbing"
+        className="doodle-button -ml-1 flex size-11 shrink-0 cursor-grab touch-none items-center justify-center doodle-sticker text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >
@@ -110,7 +110,7 @@ export function SortableItem({
           onClick={(e) => e.stopPropagation()}
           aria-label={`Buka ${item.place.name} di Google Maps`}
           title="Buka di Google Maps"
-          className="-mr-1 flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-400 hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+          className="-mr-1 flex size-11 shrink-0 items-center justify-center doodle-sticker text-neutral-400 hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
         >
           <MapPin className="size-4" aria-hidden />
         </a>

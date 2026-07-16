@@ -15,7 +15,7 @@ export default async function AppLayout({
       <div className="app-canvas flex min-h-full flex-col">
         <a
           href="#main-content"
-          className="fixed left-4 top-3 z-[100] -translate-y-20 rounded-2xl bg-teal-800 px-4 py-3 text-[14px] font-semibold text-white shadow-[0_18px_50px_rgba(15,118,110,0.12)] transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white"
+          className="fixed left-4 top-3 z-[100] -translate-y-20 doodle-sticker bg-teal-800 px-4 py-3 text-[14px] font-semibold text-white shadow-[0_18px_50px_rgba(15,118,110,0.12)] transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-white"
         >
           Lewati ke konten utama
         </a>

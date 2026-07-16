@@ -35,7 +35,7 @@ function DeleteButton() {
       type="submit"
       aria-label="Hapus bill"
       disabled={pending}
-      className="flex size-11 items-center justify-center rounded-2xl text-neutral-500 transition-all duration-300 ease-in-out hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger disabled:opacity-50"
+      className="doodle-button flex size-11 items-center justify-center doodle-sticker text-neutral-500 transition-all duration-300 ease-in-out hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger disabled:opacity-50"
     >
       <Trash className="size-4" aria-hidden />
     </button>

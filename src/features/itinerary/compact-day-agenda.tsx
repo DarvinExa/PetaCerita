@@ -44,7 +44,7 @@ export function CompactDayAgenda({
         ref={setNodeRef}
         aria-label="Urutan agenda hari ini"
         className={cn(
-          "rounded-3xl border border-white/70 bg-white p-3 transition-all duration-300 ease-in-out sm:p-4",
+          "doodle-box border border-white/70 bg-white p-3 transition-all duration-300 ease-in-out sm:p-4",
           isOver && "border-teal-300 ring-2 ring-teal-100",
         )}
       >
@@ -58,7 +58,7 @@ export function CompactDayAgenda({
             </p>
           </div>
           {items.length > 0 ? (
-            <span className="inline-flex items-center gap-1.5 rounded-2xl bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600">
+            <span className="inline-flex items-center gap-1.5 doodle-sticker bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600">
               <Clock className="size-3.5" aria-hidden />
               {items.length} agenda
             </span>
@@ -66,7 +66,7 @@ export function CompactDayAgenda({
         </div>
 
         {items.length === 0 ? (
-          <div className="flex min-h-36 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200/70 bg-neutral-50 px-4 text-center">
+          <div className="flex min-h-36 flex-col items-center justify-center doodle-box-alt border border-dashed border-slate-200/70 bg-neutral-50 px-4 text-center">
             <CalendarPlus className="size-7 text-neutral-300" aria-hidden />
             <p className="mt-2 text-[13px] font-medium text-neutral-700">
               Hari ini masih kosong

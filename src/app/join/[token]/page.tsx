@@ -23,7 +23,7 @@ function StatusNote({ status }: { status: JoinStatus }) {
   return (
     <div
       role="alert"
-      className="flex items-start gap-2 rounded-2xl border border-danger/30 bg-danger/5 px-3 py-2.5 text-[13px] text-danger"
+      className="flex items-start gap-2 doodle-box-alt border border-danger/30 bg-danger/5 px-3 py-2.5 text-[13px] text-danger"
     >
       <Warning className="mt-0.5 size-4 shrink-0" aria-hidden />
       <span>{message}</span>

@@ -444,7 +444,7 @@ export function TravelCardButton({ data }: { data: TravelCardData }) {
         className="max-h-[92vh] max-w-4xl overflow-y-auto"
       >
         <div
-          className="mb-4 grid grid-cols-2 rounded-2xl border border-white/70 bg-neutral-100 p-1"
+          className="mb-4 grid grid-cols-2 doodle-box-alt border border-white/70 bg-neutral-100 p-1"
           aria-label="Format kartu"
         >
           <button
@@ -473,7 +473,7 @@ export function TravelCardButton({ data }: { data: TravelCardData }) {
           </button>
         </div>
         <div
-          className={`overflow-hidden rounded-2xl border border-white/70 ${
+          className={`overflow-hidden doodle-box-alt border border-white/70 ${
             mode === "overlay" ? "bg-neutral-700" : "bg-neutral-100"
           }`}
         >

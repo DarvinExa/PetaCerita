@@ -38,7 +38,7 @@ export function MemberList({
   );
 
   return (
-    <ul className="flex flex-col divide-y divide-neutral-200 rounded-2xl border border-white/70 bg-white">
+    <ul className="flex flex-col divide-y divide-neutral-200 doodle-box-alt border border-white/70 bg-white">
       {members.map((member) => (
         <li key={member.id} className="flex items-center gap-3 px-4 py-3">
           <span

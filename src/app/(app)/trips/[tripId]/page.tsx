@@ -96,13 +96,13 @@ export default async function TripDetailPage({
     <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 sm:py-10">
       <Link
         href="/dashboard"
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-2xl text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        className="mb-4 inline-flex min-h-11 items-center gap-1.5 doodle-sticker text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
         <ArrowLeft className="size-4" aria-hidden />
         <span>Kembali ke dashboard</span>
       </Link>
 
-      <section className="relative mb-8 overflow-hidden rounded-3xl border border-teal-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,118,110,0.08)] sm:p-7">
+      <section className="relative mb-8 overflow-hidden doodle-box border border-teal-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,118,110,0.08)] sm:p-7">
         <span
           className="absolute inset-y-0 left-0 w-1.5 bg-teal-700"
           aria-hidden
@@ -155,7 +155,7 @@ export default async function TripDetailPage({
           </h2>
           <Link
             href={`/trips/${tripId}/itinerary`}
-            className="inline-flex min-h-11 items-center gap-1 rounded-2xl text-[13px] font-semibold text-teal-700 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+            className="inline-flex min-h-11 items-center gap-1 doodle-sticker text-[13px] font-semibold text-teal-700 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
           >
             Buka jadwal lengkap
             <ArrowRight className="size-4" aria-hidden />
@@ -166,7 +166,7 @@ export default async function TripDetailPage({
             <Card key={day.id} className="overflow-hidden p-0">
               <div className="flex items-center justify-between gap-4 border-b border-white/70 bg-neutral-50 px-4 py-3">
                 <div className="flex items-center gap-3">
-                  <span className="flex size-8 items-center justify-center rounded-2xl bg-teal-800 text-[12px] font-bold text-white">
+                  <span className="flex size-8 items-center justify-center doodle-sticker bg-teal-800 text-[12px] font-bold text-white">
                     {index + 1}
                   </span>
                   <div>

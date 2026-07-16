@@ -43,9 +43,9 @@ export function LoadingBlock({ label = "Memuat" }: { label?: string }) {
         className="flex animate-pulse flex-col gap-3 motion-reduce:animate-none"
         aria-hidden
       >
-        <div className="h-24 rounded-3xl border border-white/70 bg-white/80" />
-        <div className="h-16 rounded-3xl border border-white/70 bg-white/65" />
-        <div className="h-16 w-4/5 rounded-3xl border border-white/70 bg-white/50" />
+        <div className="h-24 doodle-box border border-white/70 bg-white/80" />
+        <div className="h-16 doodle-box border border-white/70 bg-white/65" />
+        <div className="h-16 w-4/5 doodle-box border border-white/70 bg-white/50" />
       </div>
     </div>
   );
@@ -67,7 +67,7 @@ export function ErrorState({
   retryLabel?: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-slate-200/70 bg-white px-6 py-16 text-center">
+    <div className="flex flex-col items-center justify-center gap-4 doodle-box-alt border border-dashed border-slate-200/70 bg-white px-6 py-16 text-center">
       <div className="flex size-12 items-center justify-center rounded-full bg-danger/10 text-danger">
         <WarningCircle className="size-6" aria-hidden />
       </div>
@@ -79,7 +79,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-2xl bg-teal-700 px-4 text-[15px] font-medium text-white transition-all duration-300 ease-in-out hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
+          className="doodle-button inline-flex min-h-11 touch-manipulation items-center justify-center doodle-sticker bg-teal-700 px-4 text-[15px] font-medium text-white transition-all duration-300 ease-in-out hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
         >
           {retryLabel}
         </button>

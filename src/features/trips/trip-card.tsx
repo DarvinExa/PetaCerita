@@ -14,7 +14,7 @@ export function TripCard({ trip }: { trip: TripCardData }) {
   return (
     <Link
       href={`/trips/${trip.id}`}
-      className="group block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+      className="group block doodle-sticker focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
     >
       <Card className="relative h-full overflow-hidden p-5 transition-[transform,box-shadow,border-color] group-hover:-translate-y-0.5 group-hover:border-teal-200 group-hover:shadow-[0_18px_50px_rgba(15,118,110,0.12)]">
         <span

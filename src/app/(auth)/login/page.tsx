@@ -25,12 +25,12 @@ export default async function LoginPage({
         </div>
 
         {pesan === "cek-email" ? (
-          <p className="rounded-2xl border border-teal-200 bg-teal-50 px-3 py-2.5 text-[13px] text-teal-800">
+          <p className="doodle-box-alt border border-teal-200 bg-teal-50 px-3 py-2.5 text-[13px] text-teal-800">
             Cek email kamu untuk konfirmasi akun, lalu masuk di sini.
           </p>
         ) : null}
         {error ? (
-          <p className="rounded-2xl border border-danger/30 bg-danger/5 px-3 py-2.5 text-[13px] text-danger">
+          <p className="doodle-box-alt border border-danger/30 bg-danger/5 px-3 py-2.5 text-[13px] text-danger">
             Gagal masuk. Coba lagi.
           </p>
         ) : null}

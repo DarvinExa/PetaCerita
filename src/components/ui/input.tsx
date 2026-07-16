@@ -14,7 +14,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         aria-invalid={invalid || undefined}
         className={cn(
-          "min-h-12 w-full rounded-2xl border border-white/80 bg-white/90 px-4 text-[16px] font-semibold text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.03),0_8px_24px_rgba(15,118,110,0.06)] transition-all duration-300 ease-in-out sm:text-[15px]",
+          "doodle-input min-h-12 w-full bg-white px-4 text-[16px] font-semibold text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.03),0_8px_24px_rgba(15,118,110,0.06)] transition-all duration-300 ease-in-out sm:text-[15px]",
           "placeholder:text-neutral-400",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
           invalid

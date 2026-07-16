@@ -8,7 +8,7 @@ export default function AuthLayout({
 }) {
   return (
     <main className="flex min-h-full flex-col items-center justify-center app-canvas px-4 py-12">
-      <div className="w-full max-w-[440px] rounded-[32px] bg-white/75 p-5 shadow-[0_24px_70px_rgba(15,118,110,0.12)] backdrop-blur-xl sm:p-8">
+      <div className="w-full max-w-[440px] doodle-box tape bg-white p-5  sm:p-8">
         <Link
           href="/"
           className="mb-8 flex items-center justify-center gap-2 text-teal-700"

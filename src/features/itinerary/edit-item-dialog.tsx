@@ -90,7 +90,7 @@ export function EditItemDialog({
                 id="edit-category"
                 name="category"
                 defaultValue={item.category}
-                className="h-10 w-full rounded-2xl border border-white/70 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1"
+                className="doodle-input h-10 w-full doodle-box-alt border border-white/70 bg-white px-3 text-[15px] text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1"
               >
                 {CATEGORY_ORDER.map((key) => (
                   <option key={key} value={key}>

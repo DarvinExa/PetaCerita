@@ -24,7 +24,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border border-white/70 px-3 py-1 text-[12px] font-extrabold shadow-[0_5px_14px_rgba(15,23,42,0.04)]",
+        "doodle-tag inline-flex items-center px-3 py-1 text-[12px] font-extrabold ",
         variantClasses[variant],
         className,
       )}

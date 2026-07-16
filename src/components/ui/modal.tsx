@@ -43,7 +43,7 @@ export const ModalContent = forwardRef<
       ref={ref}
       className={cn(
         "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2",
-        "max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-3xl border border-white/70 bg-white p-4 shadow-[0_18px_50px_rgba(15,118,110,0.12)] focus:outline-none sm:p-6",
+        "max-h-[calc(100dvh-2rem)] overflow-y-auto doodle-box border border-white/70 bg-white p-4 shadow-[0_18px_50px_rgba(15,118,110,0.12)] focus:outline-none sm:p-6",
         className,
       )}
       {...props}
@@ -60,7 +60,7 @@ export const ModalContent = forwardRef<
           ) : null}
         </div>
         <DialogPrimitive.Close
-          className="flex size-11 shrink-0 items-center justify-center rounded-2xl text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+          className="doodle-button flex size-11 shrink-0 items-center justify-center doodle-sticker text-neutral-600 transition-all duration-300 ease-in-out hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
           aria-label="Tutup"
         >
           <X className="size-5" aria-hidden />
