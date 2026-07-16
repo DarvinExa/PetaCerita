@@ -18,15 +18,6 @@ import {
   type InviteActionState,
 } from "./actions";
 
-type ExpiryChoice = "none" | "1" | "7" | "30";
-
-const EXPIRY_LABELS: Record<ExpiryChoice, string> = {
-  none: "Tanpa batas",
-  "1": "1 hari",
-  "7": "7 hari",
-  "30": "30 hari",
-};
-
 function GenerateButton({ hasInvite }: { hasInvite: boolean }) {
   const { pending } = useFormStatus();
   return (
@@ -76,7 +67,6 @@ export function InvitePanel({
   baseUrl: string;
 }) {
   const { notify } = useToast();
-  const [expiry, setExpiry] = useState<ExpiryChoice>("none");
   const [copied, setCopied] = useState(false);
 
   const [genState, genAction] = useActionState<InviteActionState, FormData>(
@@ -166,25 +156,6 @@ export function InvitePanel({
       <div className="flex flex-wrap items-end gap-3">
         <form action={genAction} className="flex flex-wrap items-end gap-3">
           <input type="hidden" name="tripId" value={tripId} />
-          <input
-            type="hidden"
-            name="expiresInDays"
-            value={expiry === "none" ? "" : expiry}
-          />
-          <label className="flex flex-col gap-1 text-[13px] text-neutral-600">
-            <span>Masa berlaku</span>
-            <select
-              value={expiry}
-              onChange={(e) => setExpiry(e.target.value as ExpiryChoice)}
-              className="h-10 rounded-md border border-neutral-200 bg-white px-3 text-[15px] text-neutral-900 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
-            >
-              {(Object.keys(EXPIRY_LABELS) as ExpiryChoice[]).map((key) => (
-                <option key={key} value={key}>
-                  {EXPIRY_LABELS[key]}
-                </option>
-              ))}
-            </select>
-          </label>
           <GenerateButton hasInvite={Boolean(invite)} />
         </form>
 

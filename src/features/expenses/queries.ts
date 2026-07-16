@@ -82,7 +82,18 @@ export async function getSettleUp(tripId: string) {
   const [expenses, members, persisted] = await Promise.all([
     getExpenses(tripId),
     getTripMembers(tripId),
-    prisma.settlement.findMany({ where: { tripId } }),
+    prisma.settlement.findMany({
+      where: { tripId },
+      include: {
+        events: {
+          orderBy: { createdAt: "desc" },
+          take: 8,
+          include: {
+            actor: { select: { user: { select: { name: true } } } },
+          },
+        },
+      },
+    }),
   ]);
 
   const net = netBalances(expenses.map(toExpenseInput));
@@ -97,17 +108,32 @@ export async function getSettleUp(tripId: string) {
 
   const suggested = transfers.map((t) => {
     const persistedRow = statusByPair.get(`${t.fromMemberId}:${t.toMemberId}`);
-    // Status "paid" hanya relevan bila nominal tersimpan cocok dengan nominal
-    // transfer saat ini; kalau bill berubah, anggap belum dibayar lagi.
-    const paid =
-      persistedRow?.status === "CONFIRMED" && persistedRow.amount === t.amount;
+    // Status tersimpan hanya relevan jika nominal masih sama dengan hasil
+    // netting terbaru. Perubahan bill otomatis mengembalikan tampilan ke unpaid.
+    const activeSettlement =
+      persistedRow?.amount === t.amount ? persistedRow : null;
+    const status = activeSettlement?.status ?? "UNPAID";
     return {
       fromMemberId: t.fromMemberId,
       toMemberId: t.toMemberId,
       fromName: nameById.get(t.fromMemberId) ?? "?",
       toName: nameById.get(t.toMemberId) ?? "?",
       amount: t.amount,
-      paid,
+      status,
+      submittedAt: activeSettlement?.submittedAt
+        ? activeSettlement.submittedAt.toISOString()
+        : null,
+      settledAt: activeSettlement?.settledAt
+        ? activeSettlement.settledAt.toISOString()
+        : null,
+      events: activeSettlement
+        ? activeSettlement.events.map((event) => ({
+            id: event.id,
+            type: event.type,
+            actorName: event.actor.user.name,
+            createdAt: event.createdAt.toISOString(),
+          }))
+        : [],
     };
   });
 

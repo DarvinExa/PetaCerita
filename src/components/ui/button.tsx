@@ -10,7 +10,7 @@ type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-teal-600 text-white hover:bg-teal-700 active:bg-teal-800 focus-visible:ring-teal-600",
+    "bg-teal-700 text-white hover:bg-teal-800 active:bg-teal-900 focus-visible:ring-teal-700",
   secondary:
     "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-100 active:bg-neutral-200 focus-visible:ring-teal-600",
   ghost:
@@ -20,8 +20,8 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-[13px] gap-1.5",
-  md: "h-10 px-4 text-[15px] gap-2",
+  sm: "min-h-11 px-3 text-[13px] gap-1.5",
+  md: "min-h-11 px-4 text-[15px] gap-2",
   lg: "h-12 px-5 text-[15px] gap-2",
 };
 
@@ -56,7 +56,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex items-center justify-center rounded-md font-semibold transition-colors",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-          "disabled:pointer-events-none disabled:opacity-50",
+          "touch-manipulation disabled:pointer-events-none disabled:opacity-50",
           variantClasses[variant],
           sizeClasses[size],
           className,

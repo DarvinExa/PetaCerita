@@ -2,6 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Salin `.env.example` menjadi `.env.local`. Untuk login Google, set
+`NEXT_PUBLIC_SITE_URL` ke origin aplikasi yang sebenarnya, aktifkan Google
+Provider di Supabase, lalu masukkan `${NEXT_PUBLIC_SITE_URL}/auth/callback` ke
+redirect allowlist Supabase. Redirect URI pada Google Cloud harus memakai URL
+callback provider Supabase yang ditampilkan di dashboard Supabase.
+
 First, run the development server:
 
 ```bash

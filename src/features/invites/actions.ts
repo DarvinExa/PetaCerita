@@ -17,16 +17,8 @@ import { rateLimit } from "@/server/rate-limit";
 
 export type InviteActionState = { error: string } | null;
 
-// Pilihan durasi kedaluwarsa link (dalam hari). null = tanpa kedaluwarsa.
-const EXPIRY_DAYS = new Set([1, 7, 30]);
-
 const generateSchema = z.object({
   tripId: z.string().uuid(),
-  expiresInDays: z
-    .union([z.coerce.number().int(), z.null()])
-    .optional()
-    .transform((v) => (v == null || Number.isNaN(v) ? null : v))
-    .refine((v) => v === null || EXPIRY_DAYS.has(v), "Durasi tidak valid"),
 });
 
 const tripIdSchema = z.object({ tripId: z.string().uuid() });
@@ -35,11 +27,6 @@ const removeMemberSchema = z.object({
   tripId: z.string().uuid(),
   memberId: z.string().uuid(),
 });
-
-function expiryDate(days: number | null): Date | null {
-  if (days === null) return null;
-  return new Date(Date.now() + days * 86_400_000);
-}
 
 /**
  * Buat atau ganti (regenerate) invite link trip. Hanya Owner. Regenerate
@@ -51,13 +38,12 @@ export async function generateInvite(
 ): Promise<InviteActionState> {
   const parsed = generateSchema.safeParse({
     tripId: formData.get("tripId"),
-    expiresInDays: formData.get("expiresInDays"),
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Input tidak valid" };
   }
 
-  const { tripId, expiresInDays } = parsed.data;
+  const { tripId } = parsed.data;
   let ownerMembership;
   try {
     ownerMembership = await requireTripOwner(tripId);
@@ -67,14 +53,13 @@ export async function generateInvite(
   }
 
   const { token, tokenHash } = generateInviteToken();
-  const expiresAt = expiryDate(expiresInDays);
   const createdById = ownerMembership.userId;
 
   // Upsert per trip: satu invite aktif per trip; regenerate menimpa token.
   await prisma.tripInvite.upsert({
     where: { tripId },
-    create: { tripId, token, tokenHash, expiresAt, createdById },
-    update: { token, tokenHash, expiresAt, createdById },
+    create: { tripId, token, tokenHash, expiresAt: null, createdById },
+    update: { token, tokenHash, expiresAt: null, createdById },
   });
 
   revalidatePath(`/trips/${tripId}`);

@@ -35,7 +35,7 @@ function DeleteButton() {
       type="submit"
       aria-label="Hapus bill"
       disabled={pending}
-      className="rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger disabled:opacity-50"
+      className="flex size-11 items-center justify-center rounded-md text-neutral-500 transition-colors hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger disabled:opacity-50"
     >
       <Trash className="size-4" aria-hidden />
     </button>

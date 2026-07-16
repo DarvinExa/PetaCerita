@@ -114,7 +114,7 @@ export async function updateItem(
     // Pastikan item milik trip ini sebelum mengubah.
     const item = await prisma.itineraryItem.findUnique({
       where: { id: itemId },
-      select: { tripId: true },
+      select: { tripId: true, dayId: true },
     });
     if (!item || item.tripId !== tripId) {
       return { error: "Item tidak ditemukan" };
@@ -184,10 +184,23 @@ export async function moveItem(input: {
       where: { tripId, dayId: toDayId, id: { not: itemId } },
       select: { id: true, order: true },
     });
-    const orders = insertAt(siblings, itemId, toIndex);
+    const destinationOrders = insertAt(siblings, itemId, toIndex);
+
+    const sourceSiblings =
+      item.dayId === toDayId
+        ? []
+        : await prisma.itineraryItem.findMany({
+            where: { tripId, dayId: item.dayId, id: { not: itemId } },
+            select: { id: true, order: true },
+            orderBy: { order: "asc" },
+          });
+    const sourceOrders = sourceSiblings.map((source, order) => ({
+      id: source.id,
+      order,
+    }));
 
     await prisma.$transaction(
-      orders.map((o) =>
+      [...destinationOrders, ...sourceOrders].map((o) =>
         prisma.itineraryItem.update({
           where: { id: o.id },
           data:

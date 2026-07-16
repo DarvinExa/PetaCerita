@@ -1,29 +1,80 @@
 "use client";
 
 import { useTransition } from "react";
-import { ArrowRight, Check, CheckCircle } from "@phosphor-icons/react";
+import {
+  ArrowRight,
+  Check,
+  CheckCircle,
+  ClockCounterClockwise,
+  Hourglass,
+  PaperPlaneTilt,
+  X,
+} from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { formatMoney } from "@/lib/money";
-import { markPaid } from "./actions";
+import { updateSettlementStatus } from "./actions";
+import type { SettlementAction } from "./settlement-state";
 
 type Balance = { memberId: string; name: string; net: number };
+type SettlementStatus = "UNPAID" | "PENDING" | "CONFIRMED";
+type SettlementEvent = {
+  id: string;
+  type: "SUBMITTED" | "CANCELLED" | "CONFIRMED" | "REJECTED";
+  actorName: string;
+  createdAt: string;
+};
 type Transfer = {
   fromMemberId: string;
   toMemberId: string;
   fromName: string;
   toName: string;
   amount: number;
-  paid: boolean;
+  status: SettlementStatus;
+  submittedAt: string | null;
+  settledAt: string | null;
+  events: SettlementEvent[];
 };
 
-/**
- * Panel Settle Up: saldo net tiap anggota dan daftar transfer minimal. Hanya
- * penerima (kreditur) yang melihat tombol tandai lunas untuk transfer ke dia,
- * sesuai aturan server (cek userId penerima). currentMemberId adalah id
- * keanggotaan user yang sedang login pada trip ini (null bila entah kenapa
- * tidak ketemu).
- */
+const eventLabels: Record<SettlementEvent["type"], string> = {
+  SUBMITTED: "menandai transfer sudah dikirim",
+  CANCELLED: "membatalkan pengajuan transfer",
+  CONFIRMED: "mengonfirmasi transfer",
+  REJECTED: "menolak pengajuan transfer",
+};
+
+function formatEventTime(value: string): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function statusMeta(status: SettlementStatus) {
+  if (status === "CONFIRMED") {
+    return {
+      label: "Terkonfirmasi",
+      badge: "success" as const,
+      card: "border-success/30 bg-success/[0.025]",
+    };
+  }
+  if (status === "PENDING") {
+    return {
+      label: "Menunggu konfirmasi",
+      badge: "warning" as const,
+      card: "border-warning/30 bg-warning/[0.025]",
+    };
+  }
+  return {
+    label: "Belum dibayar",
+    badge: "neutral" as const,
+    card: "border-neutral-200 bg-white",
+  };
+}
+
 export function SettleUpPanel({
   tripId,
   balances,
@@ -40,27 +91,31 @@ export function SettleUpPanel({
   const { notify } = useToast();
   const [pending, startTransition] = useTransition();
 
-  function setPaid(t: Transfer, paid: boolean) {
+  function runAction(transfer: Transfer, action: SettlementAction) {
     startTransition(async () => {
-      const result = await markPaid({
+      const result = await updateSettlementStatus({
         tripId,
-        fromMemberId: t.fromMemberId,
-        toMemberId: t.toMemberId,
-        amount: t.amount,
-        paid,
+        fromMemberId: transfer.fromMemberId,
+        toMemberId: transfer.toMemberId,
+        amount: transfer.amount,
+        action,
       });
       if (result?.error) {
         notify({ tone: "danger", title: result.error });
         return;
       }
-      notify({
-        tone: "success",
-        title: paid ? "Ditandai lunas" : "Tanda lunas dibatalkan",
-      });
+      const messages: Record<SettlementAction, string> = {
+        SUBMIT: "Transfer diajukan untuk dikonfirmasi",
+        CANCEL: "Pengajuan transfer dibatalkan",
+        CONFIRM: "Transfer berhasil dikonfirmasi",
+        REJECT: "Pengajuan transfer ditolak",
+      };
+      notify({ tone: "success", title: messages[action] });
     });
   }
 
-  const allSettled = transfers.length > 0 && transfers.every((t) => t.paid);
+  const allSettled =
+    transfers.length > 0 && transfers.every((t) => t.status === "CONFIRMED");
 
   return (
     <div className="flex flex-col gap-6">
@@ -68,30 +123,32 @@ export function SettleUpPanel({
         <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
           Saldo tiap orang
         </h3>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {balances.map((b) => {
-            const owed = b.net < 0;
-            const settled = b.net === 0;
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+          {balances.map((balance) => {
+            const owed = balance.net < 0;
+            const settled = balance.net === 0;
             return (
               <div
-                key={b.memberId}
-                className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-3 py-2"
+                key={balance.memberId}
+                className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-3 py-2.5 shadow-sm"
               >
-                <span className="text-[15px] text-neutral-900">{b.name}</span>
+                <span className="text-[14px] font-medium text-neutral-900">
+                  {balance.name}
+                </span>
                 <span
                   className={
                     settled
-                      ? "text-[15px] tabular-nums text-neutral-500"
+                      ? "text-[13px] tabular-nums text-neutral-500"
                       : owed
-                        ? "text-[15px] font-medium tabular-nums text-danger"
-                        : "text-[15px] font-medium tabular-nums text-success"
+                        ? "text-[13px] font-semibold tabular-nums text-danger"
+                        : "text-[13px] font-semibold tabular-nums text-success"
                   }
                 >
                   {settled
-                    ? "Lunas"
+                    ? "Imbang"
                     : owed
-                      ? `Bayar ${formatMoney(-b.net, baseCurrency)}`
-                      : `Terima ${formatMoney(b.net, baseCurrency)}`}
+                      ? `Bayar ${formatMoney(-balance.net, baseCurrency)}`
+                      : `Terima ${formatMoney(balance.net, baseCurrency)}`}
                 </span>
               </div>
             );
@@ -99,77 +156,157 @@ export function SettleUpPanel({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
-          Transfer yang disarankan
-        </h3>
+      <div className="flex flex-col gap-3">
+        <div>
+          <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
+            Transfer yang disarankan
+          </h3>
+          <p className="mt-1 text-[12px] leading-5 text-neutral-500">
+            Pengirim menandai transfer, lalu penerima mengonfirmasi dana masuk.
+          </p>
+        </div>
 
         {transfers.length === 0 ? (
           <div className="rounded-md border border-dashed border-neutral-300 bg-white px-4 py-6 text-center">
-            <p className="text-[15px] text-neutral-600">
+            <p className="text-[14px] text-neutral-600">
               Belum ada yang perlu ditransfer. Semua sudah imbang.
             </p>
           </div>
         ) : (
-          <ul className="flex flex-col gap-2">
-            {transfers.map((t) => {
-              const canMark =
-                currentMemberId !== null && currentMemberId === t.toMemberId;
+          <ul className="flex flex-col gap-3">
+            {transfers.map((transfer) => {
+              const isDebtor = currentMemberId === transfer.fromMemberId;
+              const isCreditor = currentMemberId === transfer.toMemberId;
+              const meta = statusMeta(transfer.status);
+
               return (
                 <li
-                  key={`${t.fromMemberId}:${t.toMemberId}`}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-neutral-200 bg-white px-3 py-2.5"
+                  key={`${transfer.fromMemberId}:${transfer.toMemberId}`}
+                  className={`rounded-md border p-3 shadow-sm ${meta.card}`}
                 >
-                  <div className="flex items-center gap-2 text-[15px]">
-                    <span className="font-medium text-neutral-900">
-                      {t.fromName}
-                    </span>
-                    <ArrowRight
-                      className="size-4 text-neutral-400"
-                      aria-hidden
-                    />
-                    <span className="font-medium text-neutral-900">
-                      {t.toName}
-                    </span>
-                    <span className="tabular-nums text-neutral-600">
-                      {formatMoney(t.amount, baseCurrency)}
-                    </span>
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 text-[14px]">
+                        <span className="font-semibold text-neutral-900">
+                          {transfer.fromName}
+                        </span>
+                        <ArrowRight
+                          className="size-4 text-neutral-400"
+                          aria-hidden
+                        />
+                        <span className="font-semibold text-neutral-900">
+                          {transfer.toName}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[18px] font-bold tabular-nums text-neutral-900">
+                        {formatMoney(transfer.amount, baseCurrency)}
+                      </p>
+                    </div>
+                    <Badge variant={meta.badge}>{meta.label}</Badge>
                   </div>
 
-                  {t.paid ? (
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 text-[13px] font-medium text-success">
-                        <CheckCircle className="size-4" aria-hidden />
-                        Lunas
-                      </span>
-                      {canMark ? (
+                  <div className="mt-3 border-t border-neutral-200/70 pt-3">
+                    {transfer.status === "UNPAID" && isDebtor ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        loading={pending}
+                        onClick={() => runAction(transfer, "SUBMIT")}
+                      >
+                        <PaperPlaneTilt className="size-4" aria-hidden />
+                        <span>Saya sudah transfer</span>
+                      </Button>
+                    ) : null}
+
+                    {transfer.status === "UNPAID" && !isDebtor ? (
+                      <p className="text-[12px] text-neutral-500">
+                        Menunggu {transfer.fromName} melakukan transfer.
+                      </p>
+                    ) : null}
+
+                    {transfer.status === "PENDING" && isCreditor ? (
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          loading={pending}
+                          onClick={() => runAction(transfer, "CONFIRM")}
+                        >
+                          <Check className="size-4" aria-hidden />
+                          <span>Konfirmasi masuk</span>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          loading={pending}
+                          onClick={() => runAction(transfer, "REJECT")}
+                        >
+                          <X className="size-4" aria-hidden />
+                          <span>Tolak</span>
+                        </Button>
+                      </div>
+                    ) : null}
+
+                    {transfer.status === "PENDING" && isDebtor ? (
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 text-[12px] text-warning">
+                          <Hourglass className="size-4" aria-hidden />
+                          Menunggu {transfer.toName} mengonfirmasi
+                        </span>
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           loading={pending}
-                          onClick={() => setPaid(t, false)}
+                          onClick={() => runAction(transfer, "CANCEL")}
                         >
                           Batalkan
                         </Button>
-                      ) : null}
-                    </div>
-                  ) : canMark ? (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      loading={pending}
-                      onClick={() => setPaid(t, true)}
-                    >
-                      <Check className="size-4" aria-hidden />
-                      <span>Tandai lunas</span>
-                    </Button>
-                  ) : (
-                    <span className="text-[13px] text-neutral-400">
-                      Menunggu {t.toName}
-                    </span>
-                  )}
+                      </div>
+                    ) : null}
+
+                    {transfer.status === "PENDING" &&
+                    !isDebtor &&
+                    !isCreditor ? (
+                      <p className="inline-flex items-center gap-1.5 text-[12px] text-warning">
+                        <Hourglass className="size-4" aria-hidden />
+                        Menunggu konfirmasi {transfer.toName}
+                      </p>
+                    ) : null}
+
+                    {transfer.status === "CONFIRMED" ? (
+                      <p className="inline-flex items-center gap-1.5 text-[12px] font-medium text-success">
+                        <CheckCircle className="size-4" aria-hidden />
+                        Dana sudah diterima dan dikonfirmasi
+                      </p>
+                    ) : null}
+                  </div>
+
+                  {transfer.events.length > 0 ? (
+                    <details className="mt-3 border-t border-neutral-200/70 pt-2">
+                      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-md text-[12px] font-medium text-neutral-600 hover:text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
+                        <ClockCounterClockwise className="size-4" aria-hidden />
+                        Riwayat status
+                      </summary>
+                      <ol className="mt-2 flex flex-col gap-2 border-l border-neutral-200 pl-3">
+                        {transfer.events.map((event) => (
+                          <li
+                            key={event.id}
+                            className="text-[12px] leading-5 text-neutral-600"
+                          >
+                            <span className="font-medium text-neutral-800">
+                              {event.actorName}
+                            </span>{" "}
+                            {eventLabels[event.type]}
+                            <span className="block text-neutral-400">
+                              {formatEventTime(event.createdAt)}
+                            </span>
+                          </li>
+                        ))}
+                      </ol>
+                    </details>
+                  ) : null}
                 </li>
               );
             })}
@@ -177,9 +314,9 @@ export function SettleUpPanel({
         )}
 
         {allSettled ? (
-          <p className="inline-flex items-center gap-1.5 text-[13px] text-success">
+          <p className="inline-flex items-center gap-1.5 text-[13px] font-medium text-success">
             <CheckCircle className="size-4" aria-hidden />
-            Semua transfer sudah lunas.
+            Semua transfer sudah dikonfirmasi.
           </p>
         ) : null}
       </div>

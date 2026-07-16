@@ -42,12 +42,19 @@ enum BudgetCategory {
   LAINNYA
 }
 
-// Status penyelesaian utang (PRD 8). PENDING dipakai di Fase 2 (konfirmasi dua
-// arah); MVP hanya UNPAID -> CONFIRMED lewat "mark as paid" oleh payer.
+// Status penyelesaian utang dua arah: debitur submit sebagai PENDING, lalu
+// kreditur mengonfirmasi menjadi CONFIRMED atau menolak kembali ke UNPAID.
 enum SettlementStatus {
   UNPAID
   PENDING
   CONFIRMED
+}
+
+enum SettlementEventType {
+  SUBMITTED
+  CANCELLED
+  CONFIRMED
+  REJECTED
 }
 
 // User selaras dengan Supabase Auth: User.id = auth user UID.
@@ -127,6 +134,7 @@ model TripMember {
   itemShares      ExpenseItemShare[]
   settlementsFrom Settlement[]       @relation("SettlementFrom")
   settlementsTo   Settlement[]       @relation("SettlementTo")
+  settlementEvents SettlementEvent[] @relation("SettlementEventActor")
 
   // Satu user hanya boleh sekali jadi anggota per trip.
   @@unique([tripId, userId])
@@ -276,7 +284,7 @@ model ExpenseItemShare {
 }
 
 // Transfer hasil netting antar anggota (PRD 8). Dihitung dari akumulasi semua
-// bill di halaman Settle Up; baris disimpan agar status "mark as paid" persist.
+// bill di halaman Settle Up; baris menyimpan state konfirmasi dua arah.
 // `amount` integer minor unit dalam base currency trip.
 model Settlement {
   id           String           @id @default(uuid()) @db.Uuid
@@ -285,6 +293,7 @@ model Settlement {
   toMemberId   String           @db.Uuid
   amount       Int
   status       SettlementStatus @default(UNPAID)
+  submittedAt  DateTime?
   settledAt    DateTime?
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
@@ -292,11 +301,30 @@ model Settlement {
   trip Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
   from TripMember @relation("SettlementFrom", fields: [fromMemberId], references: [id], onDelete: Cascade)
   to   TripMember @relation("SettlementTo", fields: [toMemberId], references: [id], onDelete: Cascade)
+  events SettlementEvent[]
 
   // Satu baris arah pembayaran per pasangan anggota per trip.
   @@unique([tripId, fromMemberId, toMemberId])
   @@index([tripId])
   @@map("settlements")
+}
+
+// Audit trail status transfer. Actor selalu anggota trip dan aksi divalidasi
+// terhadap arah transfer: from mengirim atau membatalkan, to mengonfirmasi atau
+// menolak.
+model SettlementEvent {
+  id            String              @id @default(uuid()) @db.Uuid
+  settlementId  String              @db.Uuid
+  actorMemberId String              @db.Uuid
+  type          SettlementEventType
+  createdAt     DateTime            @default(now())
+
+  settlement Settlement @relation(fields: [settlementId], references: [id], onDelete: Cascade)
+  actor      TripMember @relation("SettlementEventActor", fields: [actorMemberId], references: [id], onDelete: Cascade)
+
+  @@index([settlementId, createdAt])
+  @@index([actorMemberId])
+  @@map("settlement_events")
 }
 
 // Estimasi budget per kategori (PRD 5.4). `amount` integer minor unit dalam

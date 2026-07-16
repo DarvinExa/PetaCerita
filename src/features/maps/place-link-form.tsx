@@ -128,7 +128,7 @@ export function PlaceLinkForm({
             <button
               type="button"
               onClick={check}
-              className="ml-auto shrink-0 rounded p-1 text-neutral-400 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+              className="ml-auto flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
               aria-label="Cek ulang link"
             >
               <ArrowClockwise className="size-4" aria-hidden />

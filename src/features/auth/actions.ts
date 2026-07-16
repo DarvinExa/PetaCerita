@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/server/supabase";
+import { rateLimit } from "@/server/rate-limit";
+import { safeInternalPath } from "@/lib/redirects";
 
 /** Hasil aksi form auth; null berarti sukses (biasanya diikuti redirect). */
 export type AuthActionState = { error: string } | null;
@@ -27,6 +29,8 @@ const registerSchema = z.object({
 
 /** Ambil origin dari header request untuk membangun URL redirect absolut. */
 async function getOrigin(): Promise<string> {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured) return configured.replace(/\/$/, "");
   const headerList = await headers();
   const origin = headerList.get("origin");
   if (origin) return origin;
@@ -35,10 +39,13 @@ async function getOrigin(): Promise<string> {
   return `${proto}://${host}`;
 }
 
-function safeNext(value: FormDataEntryValue | null): string {
-  return typeof value === "string" && value.startsWith("/")
-    ? value
-    : "/dashboard";
+async function clientIp(): Promise<string> {
+  const headerList = await headers();
+  return (
+    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headerList.get("x-real-ip") ||
+    "unknown"
+  );
 }
 
 export async function loginWithEmail(
@@ -53,13 +60,22 @@ export async function loginWithEmail(
     return { error: parsed.error.issues[0]?.message ?? "Input tidak valid" };
   }
 
+  const ip = await clientIp();
+  const gate = rateLimit(
+    `auth:password:${ip}:${parsed.data.email.toLowerCase()}`,
+    8,
+    60_000,
+  );
+  if (!gate.ok)
+    return { error: "Terlalu banyak percobaan. Coba lagi sebentar." };
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
     return { error: "Email atau kata sandi salah" };
   }
 
-  redirect(safeNext(formData.get("next")));
+  redirect(safeInternalPath(formData.get("next")));
 }
 
 export async function registerWithEmail(
@@ -94,8 +110,11 @@ export async function registerWithEmail(
 }
 
 export async function loginWithGoogle(formData: FormData): Promise<void> {
+  const gate = rateLimit(`auth:google:${await clientIp()}`, 10, 60_000);
+  if (!gate.ok) redirect("/login?error=ratelimit");
+
   const origin = await getOrigin();
-  const next = safeNext(formData.get("next"));
+  const next = safeInternalPath(formData.get("next"));
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",

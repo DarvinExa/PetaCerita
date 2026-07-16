@@ -13,7 +13,7 @@ type SheetSide = "bottom" | "right";
 
 const sideClasses: Record<SheetSide, string> = {
   bottom:
-    "inset-x-0 bottom-0 max-h-[85vh] rounded-t-lg border-t data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
+    "inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto rounded-t-lg border-t data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
   right:
     "inset-y-0 right-0 w-full max-w-md border-l data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
 };
@@ -70,7 +70,7 @@ export const SheetContent = forwardRef<
             ) : null}
           </div>
           <DialogPrimitive.Close
-            className="rounded-md p-1 text-neutral-600 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+            className="flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
             aria-label="Tutup"
           >
             <X className="size-5" aria-hidden />

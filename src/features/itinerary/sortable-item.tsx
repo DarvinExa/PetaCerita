@@ -58,7 +58,7 @@ export function SortableItem({
       <button
         type="button"
         aria-label="Geser untuk memindahkan"
-        className="mt-0.5 cursor-grab touch-none rounded p-0.5 text-neutral-300 hover:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 active:cursor-grabbing"
+        className="-ml-1 flex size-11 shrink-0 cursor-grab touch-none items-center justify-center rounded-md text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >
@@ -68,7 +68,7 @@ export function SortableItem({
       <button
         type="button"
         onClick={() => onEdit(item)}
-        className="min-w-0 flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 rounded"
+        className="min-h-11 min-w-0 flex-1 rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
       >
         <div className="flex items-center gap-1.5">
           <Icon className="size-4 shrink-0 text-neutral-400" aria-hidden />
@@ -109,7 +109,7 @@ export function SortableItem({
           onClick={(e) => e.stopPropagation()}
           aria-label={`Buka ${item.place.name} di Google Maps`}
           title="Buka di Google Maps"
-          className="mt-0.5 shrink-0 rounded p-1 text-neutral-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+          className="-mr-1 flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-400 hover:bg-teal-50 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
         >
           <MapPin className="size-4" aria-hidden />
         </a>

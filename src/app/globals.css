@@ -30,10 +30,22 @@
   --color-neutral-900: #1c1917;
 
   /* Semantik. Hanya untuk status, bukan dekorasi. */
-  --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-danger: #dc2626;
-  --color-info: #2563eb;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --color-info: #1d4ed8;
+
+  /* Aksen perjalanan. Bukan warna status atau aksi utama. */
+  --color-sand-50: #fffaf0;
+  --color-sand-100: #fdf0d5;
+  --color-sand-200: #f5d9a8;
+  --color-sand-500: #95621f;
+  --color-sky-50: #f0f9ff;
+  --color-sky-100: #dff2fe;
+  --color-sky-500: #1f6f8b;
+  --color-coral-50: #fff4f1;
+  --color-coral-100: #ffe3dc;
+  --color-coral-500: #a94f40;
 
   /* Radius */
   --radius-sm: 6px;
@@ -54,6 +66,67 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  min-width: 320px;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+summary {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 2px solid CanvasText;
+    outline-offset: 3px;
+  }
+}
+
+::selection {
+  background: var(--color-teal-200);
+  color: var(--color-teal-900);
+}
+
+.app-canvas {
+  background-color: #f8f7f3;
+  background-image:
+    linear-gradient(rgba(231, 229, 228, 0.36) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(231, 229, 228, 0.28) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .app-canvas {
+    background-image: none;
+  }
 }
 
 /* Angka uang rapi berkolom. */

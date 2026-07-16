@@ -5,8 +5,6 @@ import { requireTripMember, PermissionError } from "@/server/permissions";
 import { getTripDetail } from "@/features/trips/trip-detail-queries";
 import { getItineraryBoard } from "@/features/itinerary/queries";
 import { ItineraryBoard } from "@/features/itinerary/itinerary-board";
-import { TripMap } from "@/features/maps/trip-map";
-import type { MapPoint } from "@/features/maps/trip-map-inner";
 import type { BoardItem } from "@/features/itinerary/types";
 
 export default async function ItineraryPage({
@@ -52,42 +50,27 @@ export default async function ItineraryPage({
     },
   }));
 
-  // Titik peta: satu pin per tempat berkoordinat (dedupe by placeId).
-  const seen = new Set<string>();
-  const points: MapPoint[] = [];
-  for (const item of items) {
-    const { id, lat, lng, name, address } = {
-      id: item.place.id,
-      lat: item.place.lat,
-      lng: item.place.lng,
-      name: item.place.name,
-      address: item.place.address,
-    };
-    if (lat === null || lng === null || seen.has(id)) continue;
-    seen.add(id);
-    points.push({ id, name, address, lat, lng });
-  }
-
   return (
-    <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8">
+    <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 sm:py-10">
       <Link
         href={`/trips/${tripId}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-neutral-600 hover:text-neutral-900"
+        className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-md text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
         <ArrowLeft className="size-4" aria-hidden />
         <span>Kembali ke trip</span>
       </Link>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Itinerary</h1>
-        <p className="mt-1 text-[13px] text-neutral-600">
+      <div className="mb-6 border-l-4 border-teal-700 pl-4">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-teal-700">
+          Penyusun perjalanan
+        </p>
+        <h1 className="mt-1 text-2xl font-bold tracking-[-0.02em] text-neutral-900">
+          Itinerary
+        </h1>
+        <p className="mt-1 text-[14px] text-neutral-600">
           {trip.name} - susun rencana dengan menggeser tempat dari Bucket ke
           setiap hari.
         </p>
-      </div>
-
-      <div className="mb-6">
-        <TripMap points={points} />
       </div>
 
       <ItineraryBoard

@@ -4,14 +4,17 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/db";
 import { requireTripMember, PermissionError } from "@/server/permissions";
 import { broadcastTripChange } from "@/server/realtime";
+import { rateLimit } from "@/server/rate-limit";
 import { evenShares } from "./money";
+import { getSettleUp } from "./queries";
 import {
   createExpenseSchema,
   deleteExpenseSchema,
   setBudgetSchema,
-  markPaidSchema,
+  settlementActionSchema,
   type CreateExpenseInput,
 } from "./validation";
+import { settlementTransition, type SettlementActor } from "./settlement-state";
 
 export type ExpenseActionState = { error: string } | null;
 
@@ -55,6 +58,26 @@ export async function createExpense(
 
   try {
     const member = await requireTripMember(data.tripId);
+    const gate = rateLimit(
+      `bill:create:${data.tripId}:${member.userId}`,
+      20,
+      60_000,
+    );
+    if (!gate.ok)
+      return { error: "Terlalu banyak bill dibuat. Coba lagi sebentar." };
+
+    const trip = await prisma.trip.findUnique({
+      where: { id: data.tripId },
+      select: { startDate: true, endDate: true, baseCurrency: true },
+    });
+    if (!trip) return { error: "Trip tidak ditemukan" };
+    const expenseDate = new Date(`${data.date}T00:00:00.000Z`);
+    if (expenseDate < trip.startDate || expenseDate > trip.endDate) {
+      return { error: "Tanggal bill harus berada dalam rentang trip" };
+    }
+    if (data.currency === trip.baseCurrency && data.exchangeRateToBase !== 1) {
+      return { error: "Kurs mata uang dasar harus bernilai 1" };
+    }
 
     // Payer dan semua peserta share wajib anggota trip ini.
     const participantIds = data.items.flatMap((i) =>
@@ -192,58 +215,128 @@ export async function saveBudget(
   }
 }
 
+class SettlementConflictError extends Error {}
+
 /**
- * Tandai satu transfer hasil netting sebagai lunas atau batal lunas. Hanya
- * penerima (payer/kreditur, yaitu toMember) yang boleh menandai, sesuai PRD
- * ("payer bisa ceklis lunas"). Nominal disimpan agar status batal otomatis bila
- * bill berubah dan nominal transfer bergeser.
+ * Jalankan state machine settlement dua arah. Debitur mengirim bukti status
+ * transfer, lalu kreditur mengonfirmasi atau menolak. Setiap perubahan dicatat
+ * sebagai event audit dan nominal selalu diverifikasi dari netting terbaru.
  */
-export async function markPaid(input: unknown): Promise<ExpenseActionState> {
-  const parsed = markPaidSchema.safeParse(input);
+export async function updateSettlementStatus(
+  input: unknown,
+): Promise<ExpenseActionState> {
+  const parsed = settlementActionSchema.safeParse(input);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Input tidak valid" };
   }
-  const { tripId, fromMemberId, toMemberId, amount, paid } = parsed.data;
+  const { tripId, fromMemberId, toMemberId, amount, action } = parsed.data;
 
   try {
     const member = await requireTripMember(tripId);
+    const gate = rateLimit(`settlement:${tripId}:${member.userId}`, 60, 60_000);
+    if (!gate.ok)
+      return { error: "Terlalu banyak perubahan. Coba lagi sebentar." };
 
-    // Hanya penerima (kreditur) yang boleh menandai lunas.
-    const toMember = await prisma.tripMember.findUnique({
-      where: { id: toMemberId },
-      select: { tripId: true, userId: true },
+    const pair = await prisma.tripMember.findMany({
+      where: { tripId, id: { in: [fromMemberId, toMemberId] } },
+      select: { id: true },
     });
-    if (!toMember || toMember.tripId !== tripId) {
-      return { error: "Anggota tidak ditemukan" };
-    }
-    if (toMember.userId !== member.userId) {
-      return { error: "Hanya penerima yang bisa menandai lunas" };
+    if (pair.length !== 2 || fromMemberId === toMemberId) {
+      return { error: "Pasangan transfer tidak valid" };
     }
 
-    if (paid) {
-      await prisma.settlement.upsert({
-        where: {
-          tripId_fromMemberId_toMemberId: { tripId, fromMemberId, toMemberId },
-        },
-        create: {
-          tripId,
-          fromMemberId,
-          toMemberId,
-          amount,
-          status: "CONFIRMED",
-          settledAt: new Date(),
-        },
-        update: { amount, status: "CONFIRMED", settledAt: new Date() },
-      });
-    } else {
-      await prisma.settlement.deleteMany({
-        where: { tripId, fromMemberId, toMemberId },
-      });
+    // Jangan percaya nominal dari client. Transfer harus masih ada dan sama
+    // persis dengan hasil netting server saat aksi dilakukan.
+    const settleUp = await getSettleUp(tripId);
+    const currentTransfer = settleUp.transfers.find(
+      (transfer) =>
+        transfer.fromMemberId === fromMemberId &&
+        transfer.toMemberId === toMemberId,
+    );
+    if (!currentTransfer || currentTransfer.amount !== amount) {
+      return { error: "Nominal transfer sudah berubah. Muat ulang halaman." };
     }
+
+    const persisted = await prisma.settlement.findUnique({
+      where: {
+        tripId_fromMemberId_toMemberId: { tripId, fromMemberId, toMemberId },
+      },
+      select: { id: true, amount: true, status: true },
+    });
+    const currentStatus =
+      persisted?.amount === amount ? persisted.status : "UNPAID";
+    const actor: SettlementActor =
+      member.id === fromMemberId
+        ? "DEBTOR"
+        : member.id === toMemberId
+          ? "CREDITOR"
+          : "OTHER";
+    const transition = settlementTransition(currentStatus, action, actor);
+    if (!transition) {
+      return { error: "Aksi tidak sesuai dengan status transfer saat ini" };
+    }
+
+    const now = new Date();
+    await prisma.$transaction(async (tx) => {
+      let settlementId: string;
+      if (action === "SUBMIT") {
+        const row = await tx.settlement.upsert({
+          where: {
+            tripId_fromMemberId_toMemberId: {
+              tripId,
+              fromMemberId,
+              toMemberId,
+            },
+          },
+          create: {
+            tripId,
+            fromMemberId,
+            toMemberId,
+            amount,
+            status: "PENDING",
+            submittedAt: now,
+            settledAt: null,
+          },
+          update: {
+            amount,
+            status: "PENDING",
+            submittedAt: now,
+            settledAt: null,
+          },
+          select: { id: true },
+        });
+        settlementId = row.id;
+      } else {
+        if (!persisted || persisted.amount !== amount) {
+          throw new SettlementConflictError();
+        }
+        const updated = await tx.settlement.updateMany({
+          where: { id: persisted.id, amount, status: currentStatus },
+          data: {
+            status: transition.nextStatus,
+            submittedAt: transition.nextStatus === "UNPAID" ? null : undefined,
+            settledAt: transition.nextStatus === "CONFIRMED" ? now : null,
+          },
+        });
+        if (updated.count !== 1) throw new SettlementConflictError();
+        settlementId = persisted.id;
+      }
+
+      await tx.settlementEvent.create({
+        data: {
+          settlementId,
+          actorMemberId: member.id,
+          type: transition.event,
+        },
+      });
+    });
 
     await revalidateBill(tripId);
     return null;
   } catch (err) {
+    if (err instanceof SettlementConflictError) {
+      return { error: "Status transfer sudah berubah. Muat ulang halaman." };
+    }
     return toErrorState(err);
   }
 }

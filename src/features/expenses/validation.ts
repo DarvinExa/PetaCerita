@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SETTLEMENT_ACTIONS } from "./settlement-state";
 
 /**
  * Skema validasi Split Bill dan Budget. Dipisah dari actions.ts (server-only)
@@ -120,10 +121,10 @@ export const setBudgetSchema = z.object({
     }),
 });
 
-export const markPaidSchema = z.object({
+export const settlementActionSchema = z.object({
   tripId: z.string().uuid(),
   fromMemberId: z.string().uuid(),
   toMemberId: z.string().uuid(),
-  amount: z.number().int().min(0),
-  paid: z.boolean(),
+  amount: z.number().int().positive(),
+  action: z.enum(SETTLEMENT_ACTIONS),
 });

@@ -298,7 +298,7 @@ export function CreateBillForm({
                         setItems((prev) => prev.filter((x) => x.key !== it.key))
                       }
                       aria-label="Hapus item"
-                      className="mt-2 rounded p-1 text-neutral-400 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                      className="flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-500 hover:bg-danger/5 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                     >
                       <Trash className="size-4" aria-hidden />
                     </button>

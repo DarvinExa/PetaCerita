@@ -28,7 +28,7 @@ export const TabsTrigger = forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "relative -mb-px border-b-2 border-transparent px-3 py-2 text-[15px] font-medium text-neutral-600 transition-colors",
+      "relative -mb-px min-h-11 touch-manipulation border-b-2 border-transparent px-3 py-2 text-[15px] font-medium text-neutral-600 transition-colors",
       "hover:text-neutral-900",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2",
       "data-[state=active]:border-teal-600 data-[state=active]:text-teal-800",

@@ -1,6 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Plus, Compass } from "@phosphor-icons/react/dist/ssr";
+import {
+  Plus,
+  Compass,
+  AirplaneTilt,
+  CalendarCheck,
+} from "@phosphor-icons/react/dist/ssr";
 import { requireUser } from "@/server/auth";
 import { getTripsForUser } from "@/features/trips/queries";
 import { TripSection } from "@/features/trips/trip-section";
@@ -17,25 +22,58 @@ export default async function DashboardPage() {
     trips.past.length === 0;
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900">Trip Saya</h1>
-          <p className="text-[13px] text-neutral-600">
-            Rencanakan dan kelola perjalanan kamu.
-          </p>
+    <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 sm:py-10">
+      <section className="relative mb-8 overflow-hidden rounded-lg border border-teal-900 bg-teal-900 px-5 py-6 text-white shadow-md sm:px-8 sm:py-8">
+        <div
+          className="absolute -right-10 -top-14 size-48 rounded-full border-[28px] border-teal-800"
+          aria-hidden
+        />
+        <div
+          className="absolute bottom-5 right-24 hidden h-px w-36 bg-teal-700 sm:block"
+          aria-hidden
+        />
+        <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+          <div className="max-w-xl">
+            <p className="mb-2 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-teal-200">
+              <AirplaneTilt className="size-4" aria-hidden />
+              Ruang perjalanan kamu
+            </p>
+            <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-[32px]">
+              Rencana yang rapi, perjalanan yang lebih ringan.
+            </h1>
+            <p className="mt-2 max-w-lg text-[14px] leading-6 text-teal-100">
+              Susun tempat, waktu, anggota, dan pengeluaran dalam satu ruang
+              bersama.
+            </p>
+          </div>
+          <Button
+            asChild
+            size="lg"
+            className="shrink-0 bg-sand-100 text-teal-900 hover:bg-sand-200 active:bg-sand-200 focus-visible:ring-sand-100"
+          >
+            <Link href="/trips/new">
+              <Plus className="size-4" weight="bold" aria-hidden />
+              <span>Buat Trip</span>
+            </Link>
+          </Button>
         </div>
-        <Button asChild size="md">
-          <Link href="/trips/new">
-            <Plus className="size-4" weight="bold" aria-hidden />
-            <span>Buat Trip</span>
-          </Link>
-        </Button>
-      </div>
+        {!isEmpty ? (
+          <div className="relative mt-6 flex flex-wrap gap-3 border-t border-teal-700 pt-4 text-[13px] text-teal-100">
+            <span className="inline-flex items-center gap-1.5">
+              <Compass className="size-4" aria-hidden />
+              {trips.ongoing.length} sedang berlangsung
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarCheck className="size-4" aria-hidden />
+              {trips.upcoming.length} akan datang
+            </span>
+          </div>
+        ) : null}
+      </section>
 
       {isEmpty ? (
-        <div className="flex flex-col items-center justify-center gap-4 rounded-md border border-dashed border-neutral-300 bg-white px-6 py-16 text-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-teal-50 text-teal-700">
+        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-neutral-300 bg-white px-6 py-16 text-center shadow-sm">
+          <div className="flex size-12 items-center justify-center rounded-md bg-sky-50 text-sky-500">
             <Compass className="size-6" aria-hidden />
           </div>
           <div>

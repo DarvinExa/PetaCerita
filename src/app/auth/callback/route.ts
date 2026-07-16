@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/server/supabase";
+import { safeInternalPath } from "@/lib/redirects";
 
 /**
  * Callback PKCE untuk OAuth Google dan konfirmasi email.
@@ -8,9 +9,7 @@ import { createSupabaseServerClient } from "@/server/supabase";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/dashboard";
-  // Cegah open redirect: hanya izinkan path internal.
-  const redirectPath = next.startsWith("/") ? next : "/dashboard";
+  const redirectPath = safeInternalPath(searchParams.get("next"));
 
   if (code) {
     const supabase = await createSupabaseServerClient();

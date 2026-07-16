@@ -1,7 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect, useMemo } from "react";
+import {
+  MapContainer,
+  Marker,
+  Polyline,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -9,22 +16,16 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { googleMapsUrl } from "./gmaps-url";
 
-/**
- * Peta trip berbasis Leaflet + tile OpenStreetMap (gratis, tanpa kunci). Hanya
- * dirender di client (lihat trip-map.tsx yang meng-import dinamis, ssr:false),
- * karena Leaflet menyentuh window/document.
- */
-
 export type MapPoint = {
   id: string;
   name: string;
   address: string | null;
   lat: number;
   lng: number;
+  label?: string;
+  targetId?: string;
 };
 
-// Bundler mengubah aset ikon jadi objek; Leaflet default menebak path relatif
-// yang salah. Set ikon default secara eksplisit agar pin tampil.
 const iconUrl = typeof markerIcon === "string" ? markerIcon : markerIcon.src;
 const iconRetinaUrl =
   typeof markerIcon2x === "string" ? markerIcon2x : markerIcon2x.src;
@@ -41,47 +42,122 @@ const DefaultIcon = L.icon({
   shadowSize: [41, 41],
 });
 
-export function TripMapInner({ points }: { points: MapPoint[] }) {
-  // Titik tengah dan zoom awal: rata-rata koordinat, fallback ke Indonesia.
+function numberedIcon(label: string) {
+  const safeLabel = /^\d{1,2}$/.test(label) ? label : "";
+  if (!safeLabel) return DefaultIcon;
+  return L.divIcon({
+    className: "",
+    html: `<span style="display:grid;place-items:center;width:30px;height:30px;border:3px solid white;border-radius:10px;background:#0f766e;color:white;font:700 12px system-ui;box-shadow:0 2px 8px rgba(28,25,23,.28)">${safeLabel}</span>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+    popupAnchor: [0, -18],
+  });
+}
+
+const OSM_TILE_URL = [
+  "https:/",
+  "/tile.openstreetmap.org/",
+  "{z}",
+  "/",
+  "{x}",
+  "/",
+  "{y}",
+  ".png",
+].join("");
+
+function MapViewport({ points }: { points: MapPoint[] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (points.length === 1) {
+      map.setView([points[0]!.lat, points[0]!.lng], 14);
+      return;
+    }
+    if (points.length > 1) {
+      map.fitBounds(
+        L.latLngBounds(points.map((point) => [point.lat, point.lng])),
+        { padding: [24, 24], maxZoom: 14 },
+      );
+    }
+  }, [map, points]);
+  return null;
+}
+
+export function TripMapInner({
+  points,
+  showPath = false,
+}: {
+  points: MapPoint[];
+  showPath?: boolean;
+}) {
   const center = useMemo<[number, number]>(() => {
     if (points.length === 0) return [-2.5, 118];
     const sum = points.reduce(
-      (acc, p) => ({ lat: acc.lat + p.lat, lng: acc.lng + p.lng }),
+      (acc, point) => ({ lat: acc.lat + point.lat, lng: acc.lng + point.lng }),
       { lat: 0, lng: 0 },
     );
     return [sum.lat / points.length, sum.lng / points.length];
   }, [points]);
 
+  const path = points.map(
+    (point) => [point.lat, point.lng] as [number, number],
+  );
+
   return (
     <MapContainer
       center={center}
-      zoom={points.length > 1 ? 11 : points.length === 1 ? 14 : 5}
+      zoom={points.length > 1 ? 11 : 14}
       scrollWheelZoom={false}
-      className="h-[360px] w-full rounded-lg border border-neutral-200"
+      className="relative z-0 h-[240px] w-full overflow-hidden rounded-md border border-neutral-200"
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url={OSM_TILE_URL}
       />
-      {points.map((p) => (
-        <Marker key={p.id} position={[p.lat, p.lng]} icon={DefaultIcon}>
+      <MapViewport points={points} />
+      {showPath && path.length > 1 ? (
+        <Polyline
+          positions={path}
+          pathOptions={{ color: "#0f766e", weight: 3, opacity: 0.72 }}
+        />
+      ) : null}
+      {points.map((point) => (
+        <Marker
+          key={point.id}
+          position={[point.lat, point.lng]}
+          icon={point.label ? numberedIcon(point.label) : DefaultIcon}
+        >
           <Popup>
             <span className="block text-[13px] font-medium text-neutral-900">
-              {p.name}
+              {point.label ? `${point.label}. ` : ""}
+              {point.name}
             </span>
-            {p.address ? (
+            {point.address ? (
               <span className="mt-0.5 block text-[12px] text-neutral-600">
-                {p.address}
+                {point.address}
               </span>
             ) : null}
-            <a
-              href={googleMapsUrl({ lat: p.lat, lng: p.lng, name: p.name })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-block text-[12px] font-medium text-teal-700 underline"
-            >
-              Buka di Google Maps
-            </a>
+            <span className="mt-1 flex flex-wrap gap-2">
+              {point.targetId ? (
+                <a
+                  href={`#${point.targetId}`}
+                  className="text-[12px] font-medium text-teal-700 underline"
+                >
+                  Lihat di jadwal
+                </a>
+              ) : null}
+              <a
+                href={googleMapsUrl({
+                  lat: point.lat,
+                  lng: point.lng,
+                  name: point.name,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[12px] font-medium text-teal-700 underline"
+              >
+                Buka di Google Maps
+              </a>
+            </span>
           </Popup>
         </Marker>
       ))}

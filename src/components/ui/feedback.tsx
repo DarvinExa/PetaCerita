@@ -29,9 +29,24 @@ export function Spinner({
 /** Blok loading terpusat untuk mengisi area halaman. */
 export function LoadingBlock({ label = "Memuat" }: { label?: string }) {
   return (
-    <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3">
-      <Spinner className="size-7" label={label} />
-      <p className="text-[13px] text-neutral-500">{label}...</p>
+    <div
+      className="mx-auto flex min-h-[40vh] w-full max-w-2xl flex-col justify-center gap-5"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div className="flex items-center gap-3">
+        <Spinner className="size-6" label={label} />
+        <p className="text-[14px] font-medium text-neutral-600">{label}...</p>
+      </div>
+      <div
+        className="flex animate-pulse flex-col gap-3 motion-reduce:animate-none"
+        aria-hidden
+      >
+        <div className="h-24 rounded-lg border border-neutral-200 bg-white/80" />
+        <div className="h-16 rounded-lg border border-neutral-200 bg-white/65" />
+        <div className="h-16 w-4/5 rounded-lg border border-neutral-200 bg-white/50" />
+      </div>
     </div>
   );
 }
@@ -64,7 +79,7 @@ export function ErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="inline-flex h-10 items-center justify-center rounded-md bg-teal-600 px-4 text-[15px] font-medium text-white transition-colors hover:bg-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
+          className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-md bg-teal-700 px-4 text-[15px] font-medium text-white transition-colors hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
         >
           {retryLabel}
         </button>

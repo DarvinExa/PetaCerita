@@ -82,7 +82,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 ) : null}
               </div>
               <ToastPrimitive.Close
-                className="ml-auto rounded-md p-1 text-neutral-600 transition-colors hover:bg-neutral-100"
+                className="ml-auto flex size-11 shrink-0 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 aria-label="Tutup"
               >
                 <X className="size-4" aria-hidden />
@@ -90,7 +90,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             </ToastPrimitive.Root>
           );
         })}
-        <ToastPrimitive.Viewport className="fixed bottom-0 right-0 z-50 flex w-full max-w-sm flex-col gap-2 p-4 outline-none" />
+        <ToastPrimitive.Viewport className="fixed bottom-0 right-0 z-50 flex w-full max-w-sm flex-col gap-2 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] outline-none" />
       </ToastPrimitive.Provider>
     </ToastContext.Provider>
   );

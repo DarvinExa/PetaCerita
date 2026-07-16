@@ -48,12 +48,13 @@ export function BoardColumn({
           </p>
         ) : (
           items.map((item) => (
-            <SortableItem
+            <div
               key={item.id}
-              item={item}
-              currency={currency}
-              onEdit={onEdit}
-            />
+              id={`itinerary-item-${item.id}`}
+              className="scroll-mt-24"
+            >
+              <SortableItem item={item} currency={currency} onEdit={onEdit} />
+            </div>
           ))
         )}
       </div>

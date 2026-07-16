@@ -1,23 +1,32 @@
 import Link from "next/link";
-import { MapTrifold, SignOut } from "@phosphor-icons/react/dist/ssr";
+import {
+  MapTrifold,
+  SignOut,
+  UserCircle,
+} from "@phosphor-icons/react/dist/ssr";
 import { logout } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 
 /** Header untuk area terautentikasi: brand, nama user, dan logout. */
 export function AppHeader({ userName }: { userName: string }) {
   return (
-    <header className="border-b border-neutral-200 bg-white">
-      <div className="mx-auto flex h-14 w-full max-w-[1200px] items-center justify-between px-4">
+    <header className="sticky top-0 z-40 border-b border-neutral-200/90 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between px-4">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 text-teal-700"
+          className="group flex min-h-11 items-center gap-2.5 rounded-md text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-4"
         >
-          <MapTrifold className="size-6" weight="bold" aria-hidden />
-          <span className="text-base font-bold">PetaCerita</span>
+          <span className="flex size-9 items-center justify-center rounded-md bg-teal-800 text-white shadow-sm transition-transform group-hover:-rotate-2">
+            <MapTrifold className="size-5" weight="bold" aria-hidden />
+          </span>
+          <span className="text-[15px] font-bold tracking-[-0.01em]">
+            PetaCerita
+          </span>
         </Link>
 
         <div className="flex items-center gap-3">
-          <span className="hidden text-[13px] text-neutral-600 sm:inline">
+          <span className="hidden items-center gap-1.5 rounded-md bg-neutral-100 px-2.5 py-1.5 text-[13px] font-medium text-neutral-700 sm:inline-flex">
+            <UserCircle className="size-4 text-neutral-500" aria-hidden />
             {userName}
           </span>
           <form action={logout}>
