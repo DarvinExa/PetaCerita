@@ -26,6 +26,8 @@ export async function getItineraryBoard(tripId: string) {
             name: true,
             category: true,
             address: true,
+            lat: true,
+            lng: true,
           },
         },
       },

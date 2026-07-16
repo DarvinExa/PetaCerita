@@ -2,10 +2,11 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Clock, DotsSixVertical } from "@phosphor-icons/react";
+import { Clock, DotsSixVertical, MapPin } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/money";
+import { googleMapsUrl } from "@/features/maps/gmaps-url";
 import { CATEGORY_META } from "./categories";
 import type { BoardItem } from "./types";
 
@@ -95,6 +96,24 @@ export function SortableItem({
           </p>
         ) : null}
       </button>
+
+      {item.place.lat !== null && item.place.lng !== null ? (
+        <a
+          href={googleMapsUrl({
+            lat: item.place.lat,
+            lng: item.place.lng,
+            name: item.place.name,
+          })}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Buka ${item.place.name} di Google Maps`}
+          title="Buka di Google Maps"
+          className="mt-0.5 shrink-0 rounded p-1 text-neutral-300 hover:text-teal-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        >
+          <MapPin className="size-4" aria-hidden />
+        </a>
+      ) : null}
     </div>
   );
 }

@@ -24,6 +24,8 @@ export type BoardItem = {
     name: string;
     category: ItineraryCategory;
     address: string | null;
+    lat: number | null;
+    lng: number | null;
   };
 };
 

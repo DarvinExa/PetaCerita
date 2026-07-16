@@ -68,3 +68,15 @@ export const idPairSchema = z.object({
   tripId: z.string().uuid(),
   itemId: z.string().uuid(),
 });
+
+// Lampirkan tempat hasil resolusi link Google Maps. Nama/alamat/koordinat
+// divalidasi ulang di server sebelum disimpan sebagai Place.
+export const attachPlaceSchema = z.object({
+  tripId: z.string().uuid(),
+  category: z.enum(CATEGORIES),
+  name: z.string().trim().min(1, "Nama tempat wajib diisi").max(120),
+  address: z.string().trim().max(300).nullish(),
+  lat: z.number().min(-90).max(90).nullish(),
+  lng: z.number().min(-180).max(180).nullish(),
+  note: z.string().trim().max(1000).optional().or(z.literal("")),
+});

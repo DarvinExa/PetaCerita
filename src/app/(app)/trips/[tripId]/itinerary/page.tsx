@@ -5,6 +5,8 @@ import { requireTripMember, PermissionError } from "@/server/permissions";
 import { getTripDetail } from "@/features/trips/trip-detail-queries";
 import { getItineraryBoard } from "@/features/itinerary/queries";
 import { ItineraryBoard } from "@/features/itinerary/itinerary-board";
+import { TripMap } from "@/features/maps/trip-map";
+import type { MapPoint } from "@/features/maps/trip-map-inner";
 import type { BoardItem } from "@/features/itinerary/types";
 
 export default async function ItineraryPage({
@@ -45,8 +47,26 @@ export default async function ItineraryPage({
       name: item.place.name,
       category: item.place.category,
       address: item.place.address,
+      lat: item.place.lat,
+      lng: item.place.lng,
     },
   }));
+
+  // Titik peta: satu pin per tempat berkoordinat (dedupe by placeId).
+  const seen = new Set<string>();
+  const points: MapPoint[] = [];
+  for (const item of items) {
+    const { id, lat, lng, name, address } = {
+      id: item.place.id,
+      lat: item.place.lat,
+      lng: item.place.lng,
+      name: item.place.name,
+      address: item.place.address,
+    };
+    if (lat === null || lng === null || seen.has(id)) continue;
+    seen.add(id);
+    points.push({ id, name, address, lat, lng });
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8">
@@ -64,6 +84,10 @@ export default async function ItineraryPage({
           {trip.name} - susun rencana dengan menggeser tempat dari Bucket ke
           setiap hari.
         </p>
+      </div>
+
+      <div className="mb-6">
+        <TripMap points={points} />
       </div>
 
       <ItineraryBoard
