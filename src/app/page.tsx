@@ -59,6 +59,14 @@ export default function HomePage() {
         <div className="hidden" aria-hidden />
         <div className="hidden" aria-hidden />
         <div className="relative z-10">
+          <div className="mb-7 inline-flex -rotate-1 items-center gap-3">
+            <span className="doodle-box-alt flex size-12 items-center justify-center bg-sand-100 text-slate-800 sm:size-14">
+              <MapTrifold className="size-7" weight="bold" aria-hidden />
+            </span>
+            <span className="scribble-underline text-[32px] font-extrabold leading-none text-slate-900 sm:text-[42px]">
+              PetaCerita
+            </span>
+          </div>
           <Badge
             variant="teal"
             className="px-4 py-2 text-[13px] font-bold shadow-[0_8px_24px_rgba(20,184,166,.12)]"
@@ -66,7 +74,10 @@ export default function HomePage() {
             Catatan perjalanan bersama
           </Badge>
           <h1 className="scribble-underline mt-7 max-w-3xl text-[42px] font-extrabold leading-[1.08] tracking-[-0.045em] text-slate-800 sm:text-6xl lg:text-[68px]">
-            Semua rencana perjalananmu, terasa lebih menyenangkan.
+            Karena setiap rencana perjalanan akan menghasilkan{" "}
+            <span className="highlighter-yellow inline-block -rotate-1 px-1">
+              cerita baru
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-[17px] font-medium leading-relaxed text-slate-600 sm:text-lg">
             PetaCerita menyatukan ide tempat, agenda harian, peta rute, budget,
@@ -263,7 +274,7 @@ export default function HomePage() {
             <MapTrifold className="size-5" weight="bold" />
             PetaCerita
           </Link>
-          <p>Rencanakan, jalani, lalu ceritakan.</p>
+          <p>Karena setiap rencana perjalanan akan menghasilkan cerita baru.</p>
         </div>
       </footer>
     </main>
