@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/db";
 import { requireTripMember, PermissionError } from "@/server/permissions";
+import { broadcastTripChange } from "@/server/realtime";
 import { insertAt, nextOrder } from "./ordering";
 import {
   createPlaceSchema,
@@ -13,8 +14,13 @@ import {
 
 export type ItineraryActionState = { error: string } | null;
 
-function revalidateBoard(tripId: string) {
+/**
+ * Revalidate cache halaman itinerary lalu broadcast nudge ke anggota lain agar
+ * mereka refresh. Broadcast best-effort (tidak melempar), jadi aman di-await.
+ */
+async function revalidateBoard(tripId: string) {
   revalidatePath(`/trips/${tripId}/itinerary`);
+  await broadcastTripChange(tripId, "itinerary");
 }
 
 /** Pesan error ramah dari sebuah exception aksi. */
@@ -70,7 +76,7 @@ export async function createPlace(
       },
     });
 
-    revalidateBoard(tripId);
+    await revalidateBoard(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
@@ -125,7 +131,7 @@ export async function updateItem(
       },
     });
 
-    revalidateBoard(tripId);
+    await revalidateBoard(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
@@ -192,7 +198,7 @@ export async function moveItem(input: {
       ),
     );
 
-    revalidateBoard(tripId);
+    await revalidateBoard(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
@@ -239,7 +245,7 @@ export async function deleteItem(
       }
     });
 
-    revalidateBoard(tripId);
+    await revalidateBoard(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);

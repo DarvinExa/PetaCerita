@@ -22,6 +22,7 @@ import { BoardColumn } from "./board-column";
 import { SortableItem } from "./sortable-item";
 import { EditItemDialog } from "./edit-item-dialog";
 import { AddPlaceForm } from "./add-place-form";
+import { useTripRealtime } from "@/features/realtime/use-trip-realtime";
 import { BUCKET_ID, containerOf, type BoardDay, type BoardItem } from "./types";
 
 type Containers = Record<string, string[]>;
@@ -59,6 +60,9 @@ export function ItineraryBoard({
 }) {
   const { notify } = useToast();
   const [, startTransition] = useTransition();
+
+  // Segarkan papan saat anggota lain mengubah itinerary trip ini.
+  useTripRealtime(tripId, "itinerary");
 
   const dayIds = useMemo(() => days.map((d) => d.id), [days]);
   const itemsById = useMemo(() => {

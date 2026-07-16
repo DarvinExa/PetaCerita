@@ -13,6 +13,7 @@ import { CreateBillForm } from "@/features/expenses/create-bill-form";
 import { ExpenseList, type BillRow } from "@/features/expenses/expense-list";
 import { SettleUpPanel } from "@/features/expenses/settle-up-panel";
 import { BudgetPlanner } from "@/features/expenses/budget-planner";
+import { TripRealtime } from "@/features/realtime/trip-realtime";
 import { BUDGET_CATEGORIES } from "@/features/expenses/validation";
 
 export default async function BillPage({
@@ -71,6 +72,7 @@ export default async function BillPage({
 
   return (
     <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8">
+      <TripRealtime tripId={tripId} scope="bill" />
       <Link
         href={`/trips/${tripId}`}
         className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-neutral-600 hover:text-neutral-900"

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/db";
 import { requireTripMember, PermissionError } from "@/server/permissions";
+import { broadcastTripChange } from "@/server/realtime";
 import { evenShares } from "./money";
 import {
   createExpenseSchema,
@@ -14,8 +15,9 @@ import {
 
 export type ExpenseActionState = { error: string } | null;
 
-function revalidateBill(tripId: string) {
+async function revalidateBill(tripId: string) {
   revalidatePath(`/trips/${tripId}/bill`);
+  await broadcastTripChange(tripId, "bill");
 }
 
 function toErrorState(err: unknown): ExpenseActionState {
@@ -112,7 +114,7 @@ export async function createExpense(
       },
     });
 
-    revalidateBill(data.tripId);
+    await revalidateBill(data.tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
@@ -145,7 +147,7 @@ export async function deleteExpense(
     }
 
     await prisma.expense.delete({ where: { id: expenseId } });
-    revalidateBill(tripId);
+    await revalidateBill(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
@@ -183,7 +185,7 @@ export async function saveBudget(
       });
     }
 
-    revalidateBill(tripId);
+    await revalidateBill(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
@@ -239,7 +241,7 @@ export async function markPaid(input: unknown): Promise<ExpenseActionState> {
       });
     }
 
-    revalidateBill(tripId);
+    await revalidateBill(tripId);
     return null;
   } catch (err) {
     return toErrorState(err);
