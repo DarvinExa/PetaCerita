@@ -10,6 +10,7 @@ import {
   MapPin,
 } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const highlights = [
@@ -58,15 +59,15 @@ export default function HomePage() {
         <div className="hidden" aria-hidden />
         <div className="hidden" aria-hidden />
         <div className="relative z-10">
-          <h1 className="scribble-underline max-w-3xl text-[44px] font-extrabold leading-none tracking-[-0.045em] text-slate-900 sm:text-[56px]">
-            PetaCerita
-          </h1>
-          <p className="mt-7 max-w-3xl text-[34px] font-extrabold leading-[1.12] tracking-[-0.035em] text-slate-800 sm:text-[46px] lg:text-[52px]">
-            Karena setiap rencana perjalanan akan menghasilkan{" "}
-            <span className="highlighter-yellow inline-block -rotate-1 px-1">
-              cerita baru
+          <BrandLogo priority className="hero-brand" />
+          <h1 className="mt-8 max-w-3xl text-[36px] font-extrabold leading-[1.12] tracking-[-0.035em] text-slate-800 sm:text-[46px] lg:text-[52px]">
+            Karena setiap rencana perjalanan akan menghasilkan
+            <span className="mt-3 block sm:mt-4">
+              <span className="highlighter-yellow scribble-underline inline-block -rotate-1 px-1">
+                cerita baru
+              </span>
             </span>
-          </p>
+          </h1>
           <p className="mt-6 max-w-xl text-[17px] font-medium leading-relaxed text-slate-600 sm:text-lg">
             PetaCerita menyatukan ide tempat, agenda harian, peta rute, budget,
             dan patungan dalam ruang kolaborasi yang ramah untuk semua teman
@@ -258,8 +259,8 @@ export default function HomePage() {
 
       <footer className="border-t border-white/80 bg-white/70">
         <div className="mx-auto flex max-w-[1240px] flex-col items-center justify-between gap-4 px-5 py-8 text-sm font-bold text-slate-500 sm:flex-row lg:px-8">
-          <Link href="/" className="font-extrabold text-teal-800">
-            PetaCerita
+          <Link href="/" aria-label="PetaCerita">
+            <BrandLogo compact />
           </Link>
           <p>Karena setiap rencana perjalanan akan menghasilkan cerita baru.</p>
         </div>

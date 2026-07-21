@@ -1,11 +1,8 @@
 import Link from "next/link";
-import {
-  MapTrifold,
-  SignOut,
-  UserCircle,
-} from "@phosphor-icons/react/dist/ssr";
+import { SignOut, UserCircle } from "@phosphor-icons/react/dist/ssr";
 import { logout } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/brand-logo";
 
 /** Header untuk area terautentikasi: brand, nama user, dan logout. */
 export function AppHeader({ userName }: { userName: string }) {
@@ -16,12 +13,10 @@ export function AppHeader({ userName }: { userName: string }) {
           href="/dashboard"
           className="group flex min-h-11 items-center gap-2.5 doodle-sticker text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-4"
         >
-          <span className="flex size-9 items-center justify-center doodle-box-alt -rotate-2 bg-white text-white shadow-[0_10px_30px_rgba(15,118,110,0.08)] transition-transform group-hover:-rotate-2">
-            <MapTrifold className="size-5" weight="bold" aria-hidden />
-          </span>
-          <span className="text-[16px] font-extrabold tracking-[-0.01em]">
-            PetaCerita
-          </span>
+          <BrandLogo
+            compact
+            className="transition-transform group-hover:-rotate-1"
+          />
         </Link>
 
         <div className="flex items-center gap-3">

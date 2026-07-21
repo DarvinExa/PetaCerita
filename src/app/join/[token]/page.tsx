@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 import type { Metadata } from "next";
-import { MapTrifold, Warning } from "@phosphor-icons/react/dist/ssr";
+import { Warning } from "@phosphor-icons/react/dist/ssr";
 import { getCurrentUser } from "@/server/auth";
 import {
   peekInviteTripName,
@@ -67,8 +68,7 @@ export default async function JoinPage({
           href="/"
           className="mb-8 flex items-center justify-center gap-2 text-teal-700"
         >
-          <MapTrifold className="size-6" weight="bold" aria-hidden />
-          <span className="text-lg font-bold">PetaCerita</span>
+          <BrandLogo compact />
         </Link>
 
         <Card>
