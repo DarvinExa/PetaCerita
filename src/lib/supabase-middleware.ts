@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /** Rute yang boleh diakses tanpa login. */
-const PUBLIC_PATHS = ["/", "/login", "/register", "/auth", "/join"];
+const PUBLIC_PATHS = ["/", "/login", "/register", "/auth", "/join", "/api"];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some(

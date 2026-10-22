@@ -92,6 +92,7 @@ export async function updateItem(
     tripId: formData.get("tripId"),
     itemId: formData.get("itemId"),
     category: formData.get("category"),
+    dayId: formData.get("dayId") ?? undefined,
     startTime: formData.get("startTime") ?? "",
     endTime: formData.get("endTime") ?? "",
     note: formData.get("note") ?? "",
@@ -100,8 +101,16 @@ export async function updateItem(
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Input tidak valid" };
   }
-  const { tripId, itemId, category, startTime, endTime, note, estimatedCost } =
-    parsed.data;
+  const {
+    tripId,
+    itemId,
+    category,
+    dayId,
+    startTime,
+    endTime,
+    note,
+    estimatedCost,
+  } = parsed.data;
 
   // endTime tidak boleh sebelum startTime bila keduanya diisi.
   if (startTime && endTime && endTime < startTime) {
@@ -120,16 +129,84 @@ export async function updateItem(
       return { error: "Item tidak ditemukan" };
     }
 
-    await prisma.itineraryItem.update({
-      where: { id: itemId },
-      data: {
-        category,
-        startTime: startTime || null,
-        endTime: endTime || null,
-        note: note || null,
-        estimatedCost,
-      },
-    });
+    // Jika ada perpindahan hari (misal dari Jumat ke Senin)
+    const targetDayId = dayId !== undefined ? dayId : item.dayId;
+    const isMovingDay = targetDayId !== item.dayId;
+
+    if (isMovingDay) {
+      if (targetDayId !== null) {
+        const day = await prisma.day.findUnique({
+          where: { id: targetDayId },
+          select: { tripId: true },
+        });
+        if (!day || day.tripId !== tripId) {
+          return { error: "Hari tujuan tidak valid" };
+        }
+      }
+
+      // Ambil calon tetangga di kontainer tujuan
+      const destinationSiblings = await prisma.itineraryItem.findMany({
+        where: { tripId, dayId: targetDayId, id: { not: itemId } },
+        select: { id: true, order: true },
+      });
+      const destinationOrders = insertAt(
+        destinationSiblings,
+        itemId,
+        destinationSiblings.length,
+      );
+
+      const sourceSiblings = await prisma.itineraryItem.findMany({
+        where: { tripId, dayId: item.dayId, id: { not: itemId } },
+        select: { id: true, order: true },
+        orderBy: { order: "asc" },
+      });
+      const sourceOrders = sourceSiblings.map((source, order) => ({
+        id: source.id,
+        order,
+      }));
+
+      await prisma.$transaction([
+        prisma.itineraryItem.update({
+          where: { id: itemId },
+          data: {
+            category,
+            dayId: targetDayId,
+            order:
+              destinationOrders.find((order) => order.id === itemId)?.order ??
+              0,
+            startTime: startTime || null,
+            endTime: endTime || null,
+            note: note || null,
+            estimatedCost,
+          },
+        }),
+        ...destinationOrders
+          .filter((order) => order.id !== itemId)
+          .map((order) =>
+            prisma.itineraryItem.update({
+              where: { id: order.id },
+              data: { order: order.order },
+            }),
+          ),
+        ...sourceOrders.map((order) =>
+          prisma.itineraryItem.update({
+            where: { id: order.id },
+            data: { order: order.order },
+          }),
+        ),
+      ]);
+    } else {
+      await prisma.itineraryItem.update({
+        where: { id: itemId },
+        data: {
+          category,
+          startTime: startTime || null,
+          endTime: endTime || null,
+          note: note || null,
+          estimatedCost,
+        },
+      });
+    }
 
     await revalidateBoard(tripId);
     return null;

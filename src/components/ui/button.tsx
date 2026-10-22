@@ -5,24 +5,23 @@ import { Slot } from "@radix-ui/react-slot";
 import { CircleNotch } from "@phosphor-icons/react";
 import { cn } from "@/lib/cn";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+type ButtonVariant = "primary" | "secondary" | "accent" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    "bg-sand-200 text-slate-900 hover:bg-sand-100 focus-visible:ring-slate-800",
-  secondary:
-    "bg-white text-slate-800 hover:bg-sky-50 focus-visible:ring-slate-800",
+  primary: "clay-btn-primary focus-visible:ring-teal-700",
+  secondary: "clay-btn-secondary focus-visible:ring-slate-800",
+  accent: "clay-btn-terracotta focus-visible:ring-coral-500",
   ghost:
-    "bg-transparent text-slate-700 hover:bg-white focus-visible:ring-slate-800",
+    "bg-transparent text-slate-700 hover:bg-white/80 hover:shadow-sm focus-visible:ring-slate-800 rounded-2xl transition-all",
   danger:
-    "bg-coral-100 text-danger hover:bg-coral-50 focus-visible:ring-danger",
+    "bg-coral-50 text-danger border border-coral-200/80 shadow-[0_4px_12px_rgba(197,48,48,0.12),inset_2px_2px_4px_rgba(255,255,255,0.9),inset_-2px_-2px_4px_rgba(197,48,48,0.12)] hover:bg-coral-100 focus-visible:ring-danger rounded-2xl",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "min-h-11 px-3 text-[13px] gap-1.5",
-  md: "min-h-11 px-4 text-[15px] gap-2",
-  lg: "h-12 px-5 text-[15px] gap-2",
+  sm: "min-h-10 px-4.5 py-2 text-[13px] gap-2 rounded-xl whitespace-nowrap shrink-0",
+  md: "min-h-11 px-6 py-2.5 text-[14px] gap-2.5 rounded-2xl whitespace-nowrap shrink-0",
+  lg: "min-h-12 px-7 py-3 text-[15px] gap-3 rounded-2xl whitespace-nowrap shrink-0",
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -54,9 +53,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         ref={ref}
         className={cn(
-          "doodle-button inline-flex items-center justify-center font-bold",
+          "inline-flex items-center justify-center font-bold tracking-[-0.01em]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-          "touch-manipulation disabled:pointer-events-none disabled:opacity-50",
+          "touch-manipulation disabled:pointer-events-none disabled:opacity-50 select-none",
           variantClasses[variant],
           sizeClasses[size],
           className,

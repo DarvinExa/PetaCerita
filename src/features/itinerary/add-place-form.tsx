@@ -128,10 +128,7 @@ export function AddPlaceForm({ tripId }: { tripId: string }) {
           <span>Tambah tempat</span>
         </Button>
       </ModalTrigger>
-      <ModalContent
-        title="Tambah tempat"
-        description="Simpan kandidat tempat ke Bucket Ide. Jadwalkan ke hari lewat drag."
-      >
+      <ModalContent title="Tambah tempat">
         <Tabs defaultValue="link">
           <TabsList className="mb-4">
             <TabsTrigger value="link">Dari Link</TabsTrigger>

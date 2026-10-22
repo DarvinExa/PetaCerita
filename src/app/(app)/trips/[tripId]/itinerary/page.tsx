@@ -55,23 +55,21 @@ export default async function ItineraryPage({
     <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 sm:py-10">
       <Link
         href={`/trips/${tripId}`}
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 doodle-sticker text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        className="mb-5 inline-flex min-h-10 items-center gap-2 px-5 py-2 rounded-full clay-card text-[13px] font-bold text-slate-700 shadow-sm hover:text-teal-900 hover:shadow-md transition-all whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
-        <ArrowLeft className="size-4" aria-hidden />
+        <ArrowLeft className="size-4" weight="bold" aria-hidden />
         <span>Kembali ke trip</span>
       </Link>
 
-      <div className="mb-6 border-l-4 border-teal-700 pl-4">
-        <p className="highlighter-yellow inline-block -rotate-1 text-[12px] font-bold uppercase tracking-[0.12em] text-slate-800">
-          Penyusun perjalanan
-        </p>
-        <h1 className="mt-1 text-2xl font-bold tracking-[-0.02em] text-neutral-900">
-          Itinerary
-        </h1>
-        <p className="mt-1 text-[14px] text-neutral-600">
-          {trip.name} - kumpulkan ide, pilih harinya, lalu susun urutan
-          kunjungan dengan lebih ringkas.
-        </p>
+      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2 border-b border-slate-200/80 pb-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-[-0.02em] text-neutral-900 sm:text-3xl">
+            Itinerary
+          </h1>
+          <p className="mt-1 text-[14px] font-semibold text-teal-700">
+            {trip.name}
+          </p>
+        </div>
       </div>
 
       <ItineraryBoard

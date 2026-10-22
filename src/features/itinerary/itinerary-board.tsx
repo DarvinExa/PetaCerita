@@ -272,15 +272,10 @@ export function ItineraryBoard({
   const bucketPanel = (
     <section className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-24 lg:self-start">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-600">
-            <Lightbulb className="size-4 text-sand-500" aria-hidden />
-            Bucket Ide
-          </h2>
-          <p className="mt-1 text-[12px] leading-5 text-neutral-500">
-            Kumpulkan tempat, lihat saran jarak, lalu pilih harinya.
-          </p>
-        </div>
+        <h2 className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-wider text-slate-800">
+          <Lightbulb className="size-4 text-sand-500" aria-hidden />
+          <span>Bucket Ide</span>
+        </h2>
         <AddPlaceForm tripId={tripId} />
       </div>
 
@@ -323,13 +318,10 @@ export function ItineraryBoard({
   const daysPanel = (
     <section className="min-w-0">
       <div className="mb-3">
-        <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-600">
+        <h2 className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-wider text-slate-800">
           <CalendarBlank className="size-4 text-teal-700" aria-hidden />
-          Jadwal harian
+          <span>Jadwal Harian</span>
         </h2>
-        <p className="mt-1 text-[12px] leading-5 text-neutral-500">
-          Satu hari dalam satu fokus. Gunakan panah atau pilih tanggal langsung.
-        </p>
       </div>
 
       {activeDay ? (
@@ -389,8 +381,8 @@ export function ItineraryBoard({
                     onClick={() => setActiveDayId(day.id)}
                     className={
                       selected
-                        ? "min-h-11 shrink-0 doodle-sticker bg-teal-800 px-3 text-left text-white shadow-[0_10px_30px_rgba(15,118,110,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2"
-                        : "min-h-11 shrink-0 doodle-box-alt border border-white/70 bg-white px-3 text-left text-neutral-600 hover:border-slate-200/70 hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                        ? "min-h-11 shrink-0 px-4.5 py-2.5 rounded-2xl bg-teal-800 text-left text-white shadow-[0_10px_30px_rgba(15,118,110,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 whitespace-nowrap"
+                        : "min-h-11 shrink-0 px-4.5 py-2.5 rounded-2xl clay-card text-left text-slate-700 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 whitespace-nowrap"
                     }
                   >
                     <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] opacity-75">
@@ -471,6 +463,7 @@ export function ItineraryBoard({
       <EditItemDialog
         item={editing}
         tripId={tripId}
+        days={days}
         onClose={() => setEditing(null)}
       />
     </>

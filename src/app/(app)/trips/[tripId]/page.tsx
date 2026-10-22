@@ -90,9 +90,9 @@ export default async function TripDetailPage({
     <div className="mx-auto w-full max-w-[1200px] flex-1 px-4 py-8 sm:py-10">
       <Link
         href="/dashboard"
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 doodle-sticker text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        className="mb-5 inline-flex min-h-10 items-center gap-2 px-5 py-2 rounded-full clay-card text-[13px] font-bold text-slate-700 shadow-sm hover:text-teal-900 hover:shadow-md transition-all whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
-        <ArrowLeft className="size-4" aria-hidden />
+        <ArrowLeft className="size-4" weight="bold" aria-hidden />
         <span>Kembali ke dashboard</span>
       </Link>
 
@@ -149,10 +149,10 @@ export default async function TripDetailPage({
           </h2>
           <Link
             href={`/trips/${tripId}/itinerary`}
-            className="inline-flex min-h-11 items-center gap-1 doodle-sticker text-[13px] font-semibold text-teal-700 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+            className="inline-flex min-h-10 items-center gap-2 px-4.5 py-2 rounded-full clay-card text-[13px] font-bold text-teal-700 shadow-sm hover:text-teal-900 hover:shadow-md transition-all whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
           >
-            Buka jadwal lengkap
-            <ArrowRight className="size-4" aria-hidden />
+            <span>Buka jadwal lengkap</span>
+            <ArrowRight className="size-4" weight="bold" aria-hidden />
           </Link>
         </div>
         <TripDayOverview
@@ -178,13 +178,9 @@ export default async function TripDetailPage({
 
         {isOwner ? (
           <Card className="bg-white p-4">
-            <h3 className="text-[15px] font-semibold text-neutral-900">
+            <h3 className="mb-3 text-[15px] font-bold text-neutral-900">
               Undang teman
             </h3>
-            <p className="mt-0.5 mb-4 text-[13px] text-neutral-600">
-              Bagikan link ini. Siapa pun yang buka lalu masuk otomatis jadi
-              anggota trip.
-            </p>
             <InvitePanel tripId={tripId} invite={invite} baseUrl={baseUrl} />
           </Card>
         ) : null}

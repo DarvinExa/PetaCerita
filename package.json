@@ -17,6 +17,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
+    "supabase:ping": "node scripts/ping-supabase.mjs",
     "postinstall": "prisma generate",
     "prepare": "husky"
   },

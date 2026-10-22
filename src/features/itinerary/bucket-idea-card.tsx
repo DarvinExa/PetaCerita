@@ -124,8 +124,7 @@ export function BucketIdeaCard({
               </Badge>
             </div>
             <p className="mt-0.5 text-[11px] leading-4 text-neutral-500">
-              Dibandingkan dengan {best.nearestPlace}. Jarak masih berupa garis
-              lurus.
+              Dekat dengan {best.nearestPlace}
             </p>
           </div>
         </div>

@@ -72,6 +72,12 @@ export async function loginWithEmail(
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+      return {
+        error:
+          "Email Anda belum dikonfirmasi. Silakan buka kotak masuk atau folder spam email Anda untuk mengonfirmasi akun.",
+      };
+    }
     return { error: "Email atau kata sandi salah" };
   }
 

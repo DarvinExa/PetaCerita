@@ -84,6 +84,7 @@ declare module "@phosphor-icons/react/dist/ssr" {
   export const Plus: Icon;
   export const Receipt: Icon;
   export const SignOut: Icon;
+  export const Sparkle: Icon;
   export const UserCircle: Icon;
   export const Users: Icon;
   export const UsersThree: Icon;

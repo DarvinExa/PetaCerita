@@ -75,20 +75,19 @@ export default async function BillPage({
       <TripRealtime tripId={tripId} scope="bill" />
       <Link
         href={`/trips/${tripId}`}
-        className="mb-4 inline-flex min-h-11 items-center gap-1.5 doodle-sticker text-[13px] text-neutral-600 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+        className="mb-5 inline-flex min-h-10 items-center gap-2 px-5 py-2 rounded-full clay-card text-[13px] font-bold text-slate-700 shadow-sm hover:text-teal-900 hover:shadow-md transition-all whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
       >
-        <ArrowLeft className="size-4" aria-hidden />
+        <ArrowLeft className="size-4" weight="bold" aria-hidden />
         <span>Kembali ke trip</span>
       </Link>
 
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">
+          <h1 className="text-2xl font-bold tracking-[-0.02em] text-neutral-900 sm:text-3xl">
             Budget dan Split Bill
           </h1>
-          <p className="mt-1 text-[13px] text-neutral-600">
-            {trip.name} - catat pengeluaran, bagi per item, lalu selesaikan
-            patungan.
+          <p className="mt-1 text-[14px] font-semibold text-teal-700">
+            {trip.name}
           </p>
         </div>
         <CreateBillForm
@@ -110,9 +109,6 @@ export default async function BillPage({
           </section>
 
           <section className="flex flex-col gap-3">
-            <h2 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
-              Budget planner
-            </h2>
             <BudgetPlanner
               tripId={tripId}
               rows={budgetRows}

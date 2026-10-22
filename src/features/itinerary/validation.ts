@@ -38,6 +38,13 @@ export const updateItemSchema = z.object({
   tripId: z.string().uuid(),
   itemId: z.string().uuid(),
   category: z.enum(CATEGORIES),
+  dayId: z
+    .string()
+    .uuid("ID hari tidak valid")
+    .optional()
+    .nullable()
+    .or(z.literal(""))
+    .transform((v) => (v === "" || v === undefined ? null : v)),
   startTime: timeString.optional().or(z.literal("")),
   endTime: timeString.optional().or(z.literal("")),
   note: z.string().trim().max(1000).optional().or(z.literal("")),

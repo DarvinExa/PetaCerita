@@ -187,11 +187,7 @@ export function CreateBillForm({
           <span>Buat bill</span>
         </Button>
       </ModalTrigger>
-      <ModalContent
-        title="Buat bill"
-        description="Catat siapa yang bayar dan bagi per item ke peserta."
-        className="max-h-[85vh] overflow-y-auto"
-      >
+      <ModalContent title="Buat bill" className="max-h-[85vh] overflow-y-auto">
         <div className="flex flex-col gap-4">
           <FormField label="Judul" htmlFor="bill-title" required>
             <Input

@@ -165,7 +165,7 @@ export function TripDayOverview({ days }: { days: TripDayOverviewData[] }) {
                         href={mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="doodle-button inline-flex min-h-11 shrink-0 items-center justify-center gap-2 bg-white px-3 py-2 text-[13px] font-bold text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-800"
+                        className="doodle-button inline-flex min-h-11 shrink-0 items-center justify-center gap-2.5 bg-white px-5 py-2.5 text-[13px] font-bold text-slate-800 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-800"
                       >
                         <MapTrifold
                           className="size-4"

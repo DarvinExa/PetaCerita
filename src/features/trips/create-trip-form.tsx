@@ -4,7 +4,7 @@ import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Warning } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { Input, FormField } from "@/components/ui/input";
+import { Input, Textarea, FormField } from "@/components/ui/input";
 import { createTrip, type CreateTripState } from "./actions";
 
 function SubmitButton() {
@@ -15,6 +15,8 @@ function SubmitButton() {
     </Button>
   );
 }
+
+const MAX_DESCRIPTION = 250;
 
 /** Hitung jumlah hari inklusif dari dua string tanggal, atau null bila invalid. */
 function dayCount(start: string, end: string): number | null {
@@ -30,6 +32,8 @@ export function CreateTripForm() {
     createTrip,
     null,
   );
+  const [city, setCity] = useState("");
+  const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -47,22 +51,32 @@ export function CreateTripForm() {
         </div>
       ) : null}
 
-      <FormField label="Nama trip" htmlFor="name" required>
+      <FormField label="Kota tujuan" htmlFor="city" required>
         <Input
-          id="name"
-          name="name"
-          placeholder="Liburan ke Bali"
+          id="city"
+          name="city"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="Denpasar, Bali"
           maxLength={100}
           required
         />
       </FormField>
 
-      <FormField label="Kota tujuan" htmlFor="city" required>
-        <Input
-          id="city"
-          name="city"
-          placeholder="Denpasar"
-          maxLength={100}
+      <FormField
+        label="Deskripsi trip"
+        htmlFor="name"
+        required
+        helperText={`${description.length} / ${MAX_DESCRIPTION} karakter`}
+      >
+        <Textarea
+          id="name"
+          name="name"
+          rows={3}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Ceritakan rencana trip kamu"
+          maxLength={MAX_DESCRIPTION}
           required
         />
       </FormField>

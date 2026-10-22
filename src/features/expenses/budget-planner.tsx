@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { Check } from "@phosphor-icons/react";
+import { Coins } from "@phosphor-icons/react/dist/ssr/Coins";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { formatMoney } from "@/lib/money";
@@ -62,17 +63,18 @@ export function BudgetPlanner({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex items-baseline justify-between">
-        <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
-          Budget per kategori
-        </h3>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
+          <Coins className="size-4 text-teal-700" aria-hidden />
+          <span>Budget per kategori</span>
+        </h2>
         <div className="text-[13px] text-neutral-600">
           Realisasi{" "}
-          <span className="font-medium tabular-nums text-neutral-900">
+          <span className="font-semibold tabular-nums text-neutral-900">
             {formatMoney(totalActual, baseCurrency)}
           </span>{" "}
           / estimasi{" "}
-          <span className="tabular-nums">
+          <span className="tabular-nums text-neutral-500">
             {formatMoney(totalPlanned, baseCurrency)}
           </span>
         </div>

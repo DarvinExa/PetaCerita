@@ -41,6 +41,7 @@ export const ModalContent = forwardRef<
     <ModalOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      aria-describedby={description ? undefined : undefined}
       className={cn(
         "fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2",
         "max-h-[calc(100dvh-2rem)] overflow-y-auto doodle-box border border-white/70 bg-white p-4 shadow-[0_18px_50px_rgba(15,118,110,0.12)] focus:outline-none sm:p-6",

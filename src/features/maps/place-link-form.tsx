@@ -81,7 +81,7 @@ export function PlaceLinkForm({
       <FormField
         label="Link Google Maps"
         htmlFor="gmaps-link"
-        helperText="Buka tempat di Google Maps, tap Bagikan, salin link, tempel di sini."
+        helperText="Salin link dari menu Bagikan di Google Maps"
       >
         <div className="flex gap-2">
           <Input
@@ -126,9 +126,6 @@ export function PlaceLinkForm({
                   Alamat tidak terdeteksi
                 </p>
               )}
-              <p className="mt-1 text-[12px] leading-5 text-teal-700">
-                Link asli disimpan untuk foto, ulasan, dan detail tempat.
-              </p>
             </div>
             <button
               type="button"

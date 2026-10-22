@@ -1,0 +1,25 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Berjalan setiap 3 hari pada pukul 00:00 UTC (07:00 WIB)
+    # Supabase Free Tier auto-pause jika tidak aktif selama 7 hari.
+    - cron: "0 0 */3 * *"
+  workflow_dispatch: # Memungkinkan tombol 'Run workflow' manual di GitHub Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Endpoint
+        run: |
+          echo "Sending keep-alive ping to Supabase..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X GET "${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}/auth/v1/health" \
+            -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}")
+          echo "Supabase response HTTP status: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 500 ]; then
+            echo "Success: Supabase activity registered. Project will stay active."
+          else
+            echo "Warning: Response status $STATUS. Project might be paused or credentials invalid."
+          fi

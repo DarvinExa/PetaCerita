@@ -157,14 +157,9 @@ export function SettleUpPanel({
       </div>
 
       <div className="flex flex-col gap-3">
-        <div>
-          <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
-            Transfer yang disarankan
-          </h3>
-          <p className="mt-1 text-[12px] leading-5 text-neutral-500">
-            Pengirim menandai transfer, lalu penerima mengonfirmasi dana masuk.
-          </p>
-        </div>
+        <h3 className="text-[13px] font-semibold uppercase tracking-wide text-neutral-500">
+          Transfer yang disarankan
+        </h3>
 
         {transfers.length === 0 ? (
           <div className="doodle-box-alt border border-dashed border-slate-200/70 bg-white px-4 py-6 text-center">
@@ -285,7 +280,7 @@ export function SettleUpPanel({
 
                   {transfer.events.length > 0 ? (
                     <details className="mt-3 border-t border-slate-800/20 pt-2">
-                      <summary className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 doodle-sticker text-[12px] font-medium text-neutral-600 hover:text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
+                      <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 px-4 py-2 rounded-full clay-card text-[12px] font-medium text-neutral-600 hover:text-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600">
                         <ClockCounterClockwise className="size-4" aria-hidden />
                         Riwayat status
                       </summary>

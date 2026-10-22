@@ -8,263 +8,459 @@ import {
   CalendarCheck,
   CheckCircle,
   MapPin,
+  Sparkle,
+  Clock,
+  Receipt,
 } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/brand-logo";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const highlights = [
   {
     icon: Compass,
-    tone: "bg-teal-100 text-teal-800",
+    bubbleBg: "bg-teal-100/90 text-teal-700 border-teal-200/70",
     title: "Itinerary yang enak dilihat",
-    body: "Kumpulkan ide, pilih hari, atur jam, dan susun urutan kunjungan dalam satu alur yang ringan.",
+    body: "Kumpulkan ide, pilih hari, atur jam, dan susun urutan kunjungan dalam satu alur yang ringan dan tertata rapi.",
+    preview: {
+      time: "09:00",
+      place: "Pantai Parangtritis",
+      badge: "Tersusun rapi",
+      badgeColor: "bg-teal-50 text-teal-800 border-teal-200/70",
+    },
   },
   {
     icon: MapTrifold,
-    tone: "bg-sky-100 text-sky-500",
+    bubbleBg: "bg-coral-100/90 text-coral-600 border-coral-200/70",
     title: "Peta untuk setiap hari",
-    body: "Lihat rute harian, jarak antartempat, dan buka kembali listing Google Maps asli kapan saja.",
+    body: "Lihat rute harian, estimasi jarak antarlokasi, dan buka kembali tautan Google Maps asli kapan saja tanpa ribet.",
+    preview: {
+      time: "4.2 km",
+      place: "Kranggan ke Taman Sari",
+      badge: "12 mnt rute",
+      badgeColor: "bg-coral-50 text-coral-700 border-coral-200/70",
+    },
   },
   {
     icon: Wallet,
-    tone: "bg-coral-100 text-coral-500",
+    bubbleBg: "bg-sand-100/90 text-sand-700 border-sand-200/70",
     title: "Patungan tanpa drama",
-    body: "Bagi tagihan per item, hitung saldo otomatis, lalu konfirmasi transfer dari kedua pihak.",
+    body: "Bagi tagihan per item, hitung saldo otomatis, lalu konfirmasi transfer kedua pihak secara transparan dan tuntas.",
+    preview: {
+      time: "Rp 35.000",
+      place: "Nasi Gudeg (4 orang)",
+      badge: "Bagi rata",
+      badgeColor: "bg-sand-50 text-sand-800 border-sand-200/70",
+    },
   },
 ];
 
 const steps = [
-  [
-    "01",
-    "Buat ruang trip",
-    "Tentukan kota, tanggal, mata uang, lalu undang teman dengan satu tautan.",
-  ],
-  [
-    "02",
-    "Kumpulkan ide",
-    "Tempel link Google Maps dan simpan semua kandidat tempat sebelum menentukan hari.",
-  ],
-  [
-    "03",
-    "Susun dan berangkat",
-    "Pilih hari, rapikan urutan, cek jarak, lalu kelola pengeluaran selama perjalanan.",
-  ],
+  {
+    number: "01",
+    numColor: "bg-teal-100 text-teal-800 border-teal-200/70",
+    title: "Buat ruang trip",
+    body: "Tentukan kota tujuan, tanggal perjalanan, mata uang default, lalu bagikan satu tautan undangan instan ke teman-temanmu.",
+  },
+  {
+    number: "02",
+    numColor: "bg-sand-100 text-sand-800 border-sand-200/70",
+    title: "Kumpulkan ide tempat",
+    body: "Tempel tautan Google Maps dan tampung semua rekomendasi kuliner atau wisata sebelum mengunci agenda harian.",
+  },
+  {
+    number: "03",
+    numColor: "bg-coral-100 text-coral-800 border-coral-200/70",
+    title: "Susun jadwal dan nikmati liburan",
+    body: "Atur urutan tempat, pantau estimasi jarak, catat pengeluaran bersama, dan nikmati momen perjalanan tanpa rasa cemas.",
+  },
 ];
 
 export default function HomePage() {
   return (
-    <main className="overflow-hidden text-slate-800">
-      <section className="relative mx-auto grid min-h-[760px] w-full max-w-[1240px] items-center gap-14 px-5 py-20 lg:grid-cols-[1.05fr_.95fr] lg:px-8 lg:py-28">
-        <div className="hidden" aria-hidden />
-        <div className="hidden" aria-hidden />
-        <div className="relative z-10">
-          <BrandLogo priority className="hero-brand" />
-          <h1 className="mt-8 max-w-3xl text-[36px] font-extrabold leading-[1.12] tracking-[-0.035em] text-slate-800 sm:text-[46px] lg:text-[52px]">
-            Karena setiap rencana perjalanan akan menghasilkan
-            <span className="mt-3 block sm:mt-4">
-              <span className="highlighter-yellow scribble-underline inline-block -rotate-1 px-1">
-                cerita baru
-              </span>
-            </span>
-          </h1>
-          <p className="mt-6 max-w-xl text-[17px] font-medium leading-relaxed text-slate-600 sm:text-lg">
-            PetaCerita menyatukan ide tempat, agenda harian, peta rute, budget,
-            dan patungan dalam ruang kolaborasi yang ramah untuk semua teman
-            perjalanan.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button size="lg" asChild>
-              <Link href="/register">
-                Mulai trip gratis{" "}
-                <ArrowRight className="size-5" weight="bold" aria-hidden />
-              </Link>
-            </Button>
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/login">Masuk ke akun</Link>
-            </Button>
+    <div className="relative min-h-screen overflow-x-hidden selection:bg-coral-100 selection:text-teal-900">
+      {/* Ambient background clay orbs: Deep Ocean Teal, Sunset Terracotta, and Warm Sand */}
+      <div
+        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-teal-200/20 blur-3xl" />
+        <div className="absolute top-1/4 -right-20 h-96 w-96 rounded-full bg-coral-200/15 blur-3xl" />
+        <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-sand-200/20 blur-3xl" />
+      </div>
+
+      {/* Floating Clay Navbar (Pure White surface & Deep Ocean Teal brand) */}
+      <nav className="mx-auto max-w-[1200px] px-4 pt-4 sm:px-6 sm:pt-6">
+        <div className="flex items-center justify-between rounded-full border border-white/90 bg-white/85 px-4 py-2.5 shadow-[0_8px_24px_-4px_rgba(15,76,92,0.08),inset_2px_2px_4px_rgba(255,255,255,0.98),inset_-2px_-2px_4px_rgba(30,41,59,0.03)] backdrop-blur-md sm:px-6">
+          <Link href="/" aria-label="PetaCerita Beranda">
+            <BrandLogo compact />
+          </Link>
+
+          <div className="hidden items-center gap-6 sm:flex">
+            <a
+              href="#fitur"
+              className="text-sm font-semibold text-neutral-600 transition-colors hover:text-teal-700"
+            >
+              Fitur
+            </a>
+            <a
+              href="#cara-kerja"
+              className="text-sm font-semibold text-neutral-600 transition-colors hover:text-teal-700"
+            >
+              Cara Kerja
+            </a>
           </div>
-          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-[13px] font-bold text-slate-500">
-            <span className="flex items-center gap-2">
-              <CheckCircle className="size-5 text-teal-600" weight="fill" />
-              Kolaborasi real-time
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle className="size-5 text-teal-600" weight="fill" />
-              Tanpa spreadsheet
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle className="size-5 text-teal-600" weight="fill" />
-              Mobile friendly
-            </span>
+
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/login">Masuk</Link>
+            </Button>
+            <Button size="sm" asChild>
+              <Link href="/register">Mulai Gratis</Link>
+            </Button>
           </div>
         </div>
+      </nav>
 
-        <div className="relative z-10 mx-auto w-full max-w-[540px]">
-          <div className="doodle-box tape doodle-lift rotate-1 p-4 shadow-[0_30px_80px_rgba(15,118,110,.16)] transition-all duration-300 ease-in-out hover:rotate-0 hover:scale-[1.02]">
-            <div className="doodle-box-alt bg-white p-5 sm:p-6">
+      {/* Hero Section */}
+      <main>
+        <section className="relative mx-auto grid min-h-[700px] w-full max-w-[1240px] items-center gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:gap-14 lg:py-20">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-teal-200/70 bg-teal-50/90 px-4 py-1.5 text-xs font-bold text-teal-800 shadow-[0_4px_12px_rgba(15,76,92,0.08),inset_1px_1px_3px_rgba(255,255,255,0.95)]">
+              <Sparkle className="size-4 text-sand-500" weight="fill" />
+              <span>Perencana Perjalanan Kolaboratif</span>
+            </div>
+
+            <h1 className="mt-6 text-[36px] font-extrabold leading-[1.14] tracking-[-0.035em] text-neutral-800 sm:text-[48px] lg:text-[54px]">
+              Karena setiap rencana perjalanan akan menghasilkan
+              <span className="mt-2 block bg-gradient-to-r from-teal-700 via-teal-600 to-coral-500 bg-clip-text text-transparent">
+                cerita baru
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-xl text-[16px] font-medium leading-relaxed text-neutral-500 sm:text-lg">
+              PetaCerita menyatukan ide tempat, agenda harian, peta rute,
+              budget, dan patungan dalam ruang kolaborasi yang ramah untuk semua
+              teman perjalanan.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3.5">
+              <Button size="lg" asChild>
+                <Link href="/register">
+                  <span>Mulai trip gratis</span>
+                  <ArrowRight className="size-5" weight="bold" aria-hidden />
+                </Link>
+              </Button>
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/login">Masuk ke akun</Link>
+              </Button>
+            </div>
+
+            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-[13px] font-bold text-neutral-600">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/80 px-3 py-1.5 shadow-sm">
+                <CheckCircle className="size-4 text-teal-600" weight="fill" />
+                Kolaborasi real-time
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/80 px-3 py-1.5 shadow-sm">
+                <CheckCircle className="size-4 text-sand-500" weight="fill" />
+                Tanpa spreadsheet
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/80 px-3 py-1.5 shadow-sm">
+                <CheckCircle className="size-4 text-coral-500" weight="fill" />
+                Ramah di ponsel
+              </span>
+            </div>
+          </div>
+
+          {/* Hero 3D Clay Trip Preview Device (Warm Compass Palette) */}
+          <div className="relative mx-auto w-full max-w-[540px]">
+            <div className="clay-card-interactive rounded-[32px] border border-white/95 bg-white p-6 shadow-[16px_24px_40px_-8px_rgba(15,76,92,0.12),0_6px_16px_rgba(30,41,59,0.04),inset_3px_3px_6px_rgba(255,255,255,0.98),inset_-3px_-3px_8px_rgba(30,41,59,0.04)] sm:p-7">
+              {/* Trip Header */}
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[12px] font-extrabold uppercase tracking-[.14em] text-teal-600">
-                    Trip berikutnya
-                  </p>
-                  <h2 className="mt-1 text-2xl font-extrabold text-slate-800">
+                  <span className="text-[11px] font-extrabold uppercase tracking-widest text-teal-700">
+                    Trip Berikutnya
+                  </span>
+                  <h2 className="mt-0.5 text-2xl font-extrabold tracking-tight text-neutral-800">
                     Cerita di Yogyakarta
                   </h2>
+                  <p className="mt-0.5 text-xs font-semibold text-neutral-500">
+                    24 - 27 Okt 2026, 4 Teman Perjalanan
+                  </p>
                 </div>
-                <span className="flex size-12 items-center justify-center doodle-sticker bg-coral-100 text-coral-500">
+                <span className="clay-icon-bubble flex size-12 items-center justify-center border border-coral-200/70 bg-coral-100/90 text-coral-600">
                   <MapTrifold className="size-6" weight="bold" />
                 </span>
               </div>
-              <div className="mt-5 flex gap-2 overflow-hidden">
-                <span className="rounded-full bg-teal-700 px-4 py-2 text-xs font-bold text-white">
+
+              {/* Day selector tabs */}
+              <div className="mt-5 flex gap-2">
+                <button
+                  type="button"
+                  className="clay-btn-primary rounded-xl px-4 py-1.5 text-xs font-bold shadow-sm"
+                >
                   Hari 1
-                </span>
-                <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-bold text-slate-500">
+                </button>
+                <button
+                  type="button"
+                  className="clay-btn-secondary rounded-xl px-4 py-1.5 text-xs font-bold text-neutral-600 shadow-sm"
+                >
                   Hari 2
-                </span>
-                <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-bold text-slate-500">
+                </button>
+                <button
+                  type="button"
+                  className="clay-btn-secondary rounded-xl px-4 py-1.5 text-xs font-bold text-neutral-600 shadow-sm"
+                >
                   Hari 3
-                </span>
+                </button>
               </div>
-              <div className="mt-5 doodle-box-alt bg-sky-50 p-4">
-                <div className="flex h-40 items-center justify-center doodle-sticker bg-[radial-gradient(circle_at_20%_30%,#99f6e4_0,transparent_24%),radial-gradient(circle_at_78%_62%,#fecaca_0,transparent_22%),#e0f2fe]">
-                  <div className="flex items-center gap-3 rounded-full bg-white px-4 py-2 text-xs font-extrabold text-slate-700 shadow-lg">
-                    <MapPin className="size-4 text-coral-500" weight="fill" />4
-                    tempat terhubung
-                  </div>
+
+              {/* Sunken Clay Map Canvas (Warm Compass route) */}
+              <div className="clay-sunken relative mt-5 flex h-40 items-center justify-center overflow-hidden bg-gradient-to-br from-teal-50/70 via-sand-50/50 to-white p-4">
+                <svg
+                  className="absolute inset-0 h-full w-full opacity-40"
+                  viewBox="0 0 400 160"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M 50 120 Q 150 40 220 90 T 360 50"
+                    stroke="#0F4C5C"
+                    strokeWidth="4"
+                    strokeDasharray="6 6"
+                  />
+                  <circle cx="50" cy="120" r="7" fill="#0F4C5C" />
+                  <circle cx="220" cy="90" r="7" fill="#FB8B24" />
+                  <circle cx="360" cy="50" r="7" fill="#E36414" />
+                </svg>
+
+                <div className="relative z-10 flex items-center gap-2 rounded-full border border-white/95 bg-white/95 px-4 py-2 text-xs font-extrabold text-neutral-800 shadow-[0_6px_14px_rgba(30,41,59,0.08),inset_1px_1px_2px_rgba(255,255,255,1)]">
+                  <MapPin className="size-4 text-coral-500" weight="fill" />
+                  <span>3 lokasi terhubung, estimasi 18 km</span>
                 </div>
               </div>
-              <div className="mt-4 space-y-3">
+
+              {/* Itinerary Tiles */}
+              <div className="mt-4 space-y-2.5">
                 {[
-                  "Sarapan di Pasar Kranggan",
-                  "Jalan santai di Taman Sari",
-                  "Senja di Bukit Bintang",
-                ].map((item, index) => (
+                  {
+                    num: "01",
+                    title: "Sarapan di Pasar Kranggan",
+                    time: "08:30",
+                    numStyle: "bg-teal-100 text-teal-800 border-teal-200/70",
+                  },
+                  {
+                    num: "02",
+                    title: "Jalan santai di Taman Sari",
+                    time: "10:30",
+                    numStyle: "bg-sand-100 text-sand-800 border-sand-200/70",
+                  },
+                  {
+                    num: "03",
+                    title: "Senja di Bukit Bintang",
+                    time: "16:45",
+                    numStyle: "bg-coral-100 text-coral-800 border-coral-200/70",
+                  },
+                ].map(({ num, title, time, numStyle }) => (
                   <div
-                    key={item}
-                    className="flex items-center gap-3 doodle-box-alt bg-white p-3"
+                    key={num}
+                    className="flex items-center justify-between rounded-2xl border border-white/90 bg-white px-3.5 py-2.5 shadow-[0_4px_12px_rgba(30,41,59,0.04),inset_2px_2px_4px_rgba(255,255,255,0.95),inset_-2px_-2px_4px_rgba(30,41,59,0.02)] transition-transform hover:scale-[1.01]"
                   >
-                    <span className="flex size-9 items-center justify-center doodle-sticker bg-teal-100 text-xs font-extrabold text-teal-800">
-                      {String(index + 1).padStart(2, "0")}
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`clay-badge flex size-8 items-center justify-center border text-xs font-black ${numStyle}`}
+                      >
+                        {num}
+                      </span>
+                      <span className="text-sm font-bold text-neutral-800">
+                        {title}
+                      </span>
+                    </div>
+                    <span className="rounded-md bg-neutral-100 px-2 py-0.5 text-[11px] font-bold text-neutral-500">
+                      {time}
                     </span>
-                    <span className="text-sm font-bold text-slate-700">
-                      {item}
+                  </div>
+                ))}
+              </div>
+
+              {/* Split bill quick status strip */}
+              <div className="mt-4 flex items-center justify-between rounded-2xl border border-teal-200/70 bg-teal-50/80 px-4 py-2.5 text-xs shadow-sm">
+                <span className="flex items-center gap-2 font-bold text-neutral-800">
+                  <Receipt className="size-4 text-teal-700" weight="bold" />
+                  Patungan: Rp 640.000
+                </span>
+                <span className="flex items-center gap-1.5 font-bold text-teal-800">
+                  <CheckCircle className="size-4 text-teal-600" weight="fill" />
+                  Semua terkonfirmasi
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Highlights Section */}
+        <section
+          id="fitur"
+          className="mx-auto w-full max-w-[1240px] px-4 py-20 sm:px-6 lg:px-8"
+        >
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200/70 bg-teal-50/90 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-800 shadow-sm">
+              Satu Tempat Untuk Semuanya
+            </span>
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-5xl">
+              Fokus menikmati trip, bukan mengurus kerumitannya.
+            </h2>
+            <p className="mt-4 text-base font-medium leading-relaxed text-neutral-500">
+              Setiap fitur dirancang untuk membuat keputusan kelompok terasa
+              lebih sederhana, jelas, dan menyenangkan.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {highlights.map(
+              ({ icon: Icon, bubbleBg, title, body, preview }) => (
+                <div
+                  key={title}
+                  className="clay-card-interactive flex flex-col justify-between rounded-[28px] border border-white/95 bg-white p-7 shadow-[10px_16px_28px_-6px_rgba(15,76,92,0.08),0_4px_12px_rgba(30,41,59,0.04),inset_3px_3px_6px_rgba(255,255,255,0.98),inset_-3px_-3px_8px_rgba(30,41,59,0.04)]"
+                >
+                  <div>
+                    <span
+                      className={`clay-icon-bubble inline-flex size-14 items-center justify-center border ${bubbleBg}`}
+                    >
+                      <Icon className="size-7" weight="bold" />
                     </span>
+                    <h3 className="mt-5 text-xl font-extrabold text-neutral-800">
+                      {title}
+                    </h3>
+                    <p className="mt-2.5 text-[15px] font-medium leading-relaxed text-neutral-500">
+                      {body}
+                    </p>
+                  </div>
+
+                  {/* Tactile Mini Preview inside card */}
+                  <div className="mt-6 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-3.5 shadow-inner">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="flex items-center gap-1.5 font-bold text-neutral-800">
+                        <Clock className="size-3.5 text-teal-700" />
+                        {preview.time}
+                      </span>
+                      <span
+                        className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${preview.badgeColor}`}
+                      >
+                        {preview.badge}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 truncate text-xs font-semibold text-neutral-600">
+                      {preview.place}
+                    </p>
+                  </div>
+                </div>
+              ),
+            )}
+          </div>
+        </section>
+
+        {/* Step by Step Workflow Section */}
+        <section
+          id="cara-kerja"
+          className="mx-auto w-full max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8"
+        >
+          <div className="clay-card-warm rounded-[36px] border border-sand-200/80 p-7 sm:p-12 lg:p-14">
+            <div className="grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+              <div>
+                <span className="clay-icon-bubble flex size-14 items-center justify-center border border-coral-200/80 bg-coral-100 text-coral-600">
+                  <CalendarCheck className="size-7" weight="bold" />
+                </span>
+                <h2 className="mt-5 text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-4xl">
+                  Dari obrolan grup menjadi rencana nyata.
+                </h2>
+                <p className="mt-4 text-[16px] font-medium leading-relaxed text-neutral-500">
+                  Tidak ada lagi ide yang tenggelam di chat grup, jadwal yang
+                  tercecer di catatan pribadi, atau hitungan patungan yang
+                  membingungkan saat pulang liburan.
+                </p>
+                <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-teal-200/70 bg-white/90 px-4 py-2 text-xs font-bold text-teal-800 shadow-sm">
+                  <CheckCircle className="size-4 text-teal-600" weight="fill" />
+                  <span>Semua anggota trip dapat mengakses link yang sama</span>
+                </div>
+              </div>
+
+              <div className="grid gap-4">
+                {steps.map(({ number, numColor, title, body }) => (
+                  <div
+                    key={number}
+                    className="clay-card rounded-2xl border border-white/95 bg-white p-5 shadow-[6px_10px_20px_-4px_rgba(30,41,59,0.05),inset_2px_2px_4px_rgba(255,255,255,0.98),inset_-2px_-2px_4px_rgba(30,41,59,0.03)]"
+                  >
+                    <div className="flex items-start gap-4">
+                      <span
+                        className={`clay-badge flex size-10 shrink-0 items-center justify-center border text-sm font-black ${numColor}`}
+                      >
+                        {number}
+                      </span>
+                      <div>
+                        <h3 className="text-base font-extrabold text-neutral-800">
+                          {title}
+                        </h3>
+                        <p className="mt-1 text-sm font-medium leading-relaxed text-neutral-500">
+                          {body}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mx-auto w-full max-w-[1240px] px-5 py-20 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-extrabold uppercase tracking-[.16em] text-teal-600">
-            Satu tempat untuk semuanya
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-slate-800 sm:text-5xl">
-            Fokus menikmati trip, bukan mengurus kerumitannya.
-          </h2>
-          <p className="mt-4 text-base font-medium leading-relaxed text-slate-600">
-            Setiap fitur dirancang untuk membuat keputusan kelompok terasa lebih
-            sederhana, jelas, dan menyenangkan.
-          </p>
-        </div>
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {highlights.map(({ icon: Icon, tone, title, body }) => (
-            <Card
-              key={title}
-              className="doodle-lift rotate-1 border-transparent p-2 odd:-rotate-1"
-            >
-              <CardHeader>
-                <span
-                  className={`flex size-14 items-center justify-center doodle-sticker ${tone}`}
-                >
-                  <Icon className="size-7" weight="bold" />
-                </span>
-                <CardTitle className="mt-4 text-xl font-extrabold">
-                  {title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-medium leading-relaxed text-slate-600">
-                  {body}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-[1240px] px-5 py-20 lg:px-8">
-        <div className="doodle-box-alt rotate-1 bg-[#fffdf0] px-6 py-12 text-slate-800 sm:px-10 lg:px-14">
-          <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
-            <div>
-              <span className="flex size-14 items-center justify-center doodle-sticker bg-white/15">
-                <CalendarCheck className="size-7" weight="bold" />
-              </span>
-              <h2 className="mt-5 text-3xl font-extrabold text-slate-800 sm:text-4xl">
-                Dari obrolan grup menjadi rencana nyata.
-              </h2>
-              <p className="mt-4 font-medium leading-relaxed text-slate-600">
-                Tidak ada lagi ide yang tenggelam, jadwal yang tercecer, atau
-                hitungan patungan yang membingungkan.
-              </p>
+        {/* Call To Action Section */}
+        <section className="mx-auto w-full max-w-[1040px] px-4 py-20 text-center sm:px-6">
+          <div className="clay-card rounded-[36px] border border-white/95 bg-white p-8 shadow-[14px_22px_36px_-6px_rgba(15,76,92,0.1),inset_3px_3px_6px_rgba(255,255,255,0.98),inset_-3px_-3px_8px_rgba(30,41,59,0.04)] sm:p-14">
+            <span className="clay-icon-bubble mx-auto flex size-16 items-center justify-center border border-teal-200/70 bg-teal-100/90 text-teal-800">
+              <Users className="size-8" weight="bold" />
+            </span>
+            <h2 className="mt-6 text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-4xl lg:text-5xl">
+              Cerita perjalanan terbaik dimulai dari rencana yang terasa ringan.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-[16px] font-medium leading-relaxed text-neutral-500 sm:text-lg">
+              Ajak temanmu, kumpulkan semua ide tempat, lalu bangun perjalanan
+              yang benar-benar ingin kalian jalani bersama.
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button asChild size="lg">
+                <Link href="/register">
+                  <span>Buat trip pertamamu</span>
+                  <ArrowRight className="size-5" weight="bold" />
+                </Link>
+              </Button>
             </div>
-            <div className="grid gap-4">
-              {steps.map(([number, title, body]) => (
-                <div
-                  key={number}
-                  className="doodle-box-alt doodle-box bg-white p-5 backdrop-blur"
-                >
-                  <div className="flex gap-4">
-                    <span className="text-2xl font-black text-sand-200">
-                      {number}
-                    </span>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-800">
-                        {title}
-                      </h3>
-                      <p className="mt-1 text-sm font-medium leading-relaxed text-slate-600">
-                        {body}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className="mt-4 text-xs font-semibold text-neutral-500">
+              Gratis untuk perjalanan pertama, tanpa perlu kartu kredit.
+            </p>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <section className="mx-auto w-full max-w-[980px] px-5 py-24 text-center">
-        <span className="mx-auto flex size-16 items-center justify-center doodle-box-alt bg-coral-100 text-coral-500 shadow-[0_12px_34px_rgba(169,79,64,.13)]">
-          <Users className="size-8" weight="bold" />
-        </span>
-        <h2 className="mt-6 text-4xl font-extrabold text-slate-800 sm:text-5xl">
-          Cerita perjalanan terbaik dimulai dari rencana yang terasa ringan.
-        </h2>
-        <p className="mx-auto mt-5 max-w-2xl text-lg font-medium leading-relaxed text-slate-600">
-          Ajak temanmu, kumpulkan semua ide, lalu bangun perjalanan yang
-          benar-benar ingin kalian jalani bersama.
-        </p>
-        <Button asChild size="lg" className="mt-8">
-          <Link href="/register">
-            Buat trip pertamamu <ArrowRight className="size-5" weight="bold" />
-          </Link>
-        </Button>
-      </section>
-
-      <footer className="border-t border-white/80 bg-white/70">
-        <div className="mx-auto flex max-w-[1240px] flex-col items-center justify-between gap-4 px-5 py-8 text-sm font-bold text-slate-500 sm:flex-row lg:px-8">
-          <Link href="/" aria-label="PetaCerita">
+      {/* Footer */}
+      <footer className="border-t border-neutral-200/60 bg-white/70 py-8 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-[1240px] flex-col items-center justify-between gap-4 px-4 text-xs font-semibold text-neutral-500 sm:flex-row sm:px-6 lg:px-8">
+          <Link href="/" aria-label="PetaCerita Beranda">
             <BrandLogo compact />
           </Link>
-          <p>Karena setiap rencana perjalanan akan menghasilkan cerita baru.</p>
+          <p>
+            PetaCerita, karena setiap rencana perjalanan akan menghasilkan
+            cerita baru.
+          </p>
+          <div className="flex items-center gap-4 text-teal-700">
+            <Link href="/login" className="hover:underline">
+              Masuk
+            </Link>
+            <span>&middot;</span>
+            <Link href="/register" className="hover:underline">
+              Daftar
+            </Link>
+          </div>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

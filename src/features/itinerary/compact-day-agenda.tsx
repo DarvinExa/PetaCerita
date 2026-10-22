@@ -48,15 +48,10 @@ export function CompactDayAgenda({
           isOver && "border-teal-300 ring-2 ring-teal-100",
         )}
       >
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <h3 className="text-[14px] font-semibold text-neutral-900">
-              Urutan kunjungan
-            </h3>
-            <p className="mt-0.5 text-[12px] leading-5 text-neutral-500">
-              Geser kartu untuk mengurutkan. Klik kartu untuk mengatur jamnya.
-            </p>
-          </div>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-[14px] font-bold text-slate-800">
+            Urutan Kunjungan
+          </h3>
           {items.length > 0 ? (
             <span className="inline-flex items-center gap-1.5 doodle-sticker bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600">
               <Clock className="size-3.5" aria-hidden />

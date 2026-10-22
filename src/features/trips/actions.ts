@@ -16,8 +16,16 @@ const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Tanggal tidak valid");
 
 const createTripSchema = z
   .object({
-    name: z.string().trim().min(1, "Nama trip wajib diisi").max(100),
-    city: z.string().trim().min(1, "Kota tujuan wajib diisi").max(100),
+    name: z
+      .string()
+      .trim()
+      .min(1, "Deskripsi trip wajib diisi")
+      .max(250, "Deskripsi trip maksimal 250 karakter"),
+    city: z
+      .string()
+      .trim()
+      .min(1, "Kota tujuan wajib diisi")
+      .max(100, "Kota tujuan maksimal 100 karakter"),
     startDate: dateOnly,
     endDate: dateOnly,
     baseCurrency: z

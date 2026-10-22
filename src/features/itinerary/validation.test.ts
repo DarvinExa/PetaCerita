@@ -91,6 +91,33 @@ describe("updateItemSchema", () => {
     });
     expect(r.success).toBe(true);
   });
+
+  it("menerima dayId valid dan dayId kosong sebagai null", () => {
+    const r1 = updateItemSchema.safeParse({
+      ...base,
+      dayId: DAY,
+      estimatedCost: "",
+    });
+    expect(r1.success).toBe(true);
+    if (r1.success) expect(r1.data.dayId).toBe(DAY);
+
+    const r2 = updateItemSchema.safeParse({
+      ...base,
+      dayId: "",
+      estimatedCost: "",
+    });
+    expect(r2.success).toBe(true);
+    if (r2.success) expect(r2.data.dayId).toBeNull();
+  });
+
+  it("menolak dayId bukan format UUID", () => {
+    const r = updateItemSchema.safeParse({
+      ...base,
+      dayId: "invalid-uuid",
+      estimatedCost: "",
+    });
+    expect(r.success).toBe(false);
+  });
 });
 
 describe("moveItemSchema", () => {

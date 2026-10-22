@@ -30,6 +30,33 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  invalid?: boolean;
+}
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, invalid = false, ...props }, ref) => {
+    return (
+      <textarea
+        ref={ref}
+        aria-invalid={invalid || undefined}
+        className={cn(
+          "doodle-input min-h-[100px] w-full resize-y bg-white p-3.5 text-[15px] font-medium leading-relaxed text-slate-800 shadow-[inset_0_1px_2px_rgba(15,23,42,0.03),0_8px_24px_rgba(15,118,110,0.06)] transition-all duration-300 ease-in-out",
+          "placeholder:text-neutral-400 placeholder:font-normal",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",
+          invalid
+            ? "border-danger focus-visible:ring-danger"
+            : "border-white/80 hover:bg-white focus-visible:ring-teal-500",
+          "disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:opacity-60",
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
+Textarea.displayName = "Textarea";
+
 interface FormFieldProps {
   label: string;
   htmlFor?: string;

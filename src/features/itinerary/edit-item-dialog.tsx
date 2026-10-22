@@ -9,7 +9,14 @@ import { Modal, ModalContent } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { updateItem, deleteItem, type ItineraryActionState } from "./actions";
 import { CATEGORY_ORDER, CATEGORY_META } from "./categories";
-import type { BoardItem } from "./types";
+import type { BoardDay, BoardItem } from "./types";
+
+const dayFormatter = new Intl.DateTimeFormat("id-ID", {
+  weekday: "long",
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+});
 
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -43,10 +50,12 @@ function DeleteButton() {
 export function EditItemDialog({
   item,
   tripId,
+  days = [],
   onClose,
 }: {
   item: BoardItem | null;
   tripId: string;
+  days?: BoardDay[];
   onClose: () => void;
 }) {
   const { notify } = useToast();
@@ -84,6 +93,24 @@ export function EditItemDialog({
           >
             <input type="hidden" name="tripId" value={tripId} />
             <input type="hidden" name="itemId" value={item.id} />
+
+            {days.length > 0 ? (
+              <FormField label="Pindahkan ke Hari" htmlFor="edit-day">
+                <select
+                  id="edit-day"
+                  name="dayId"
+                  defaultValue={item.dayId ?? ""}
+                  className="doodle-input h-10 w-full doodle-box-alt border border-white/70 bg-white px-3 text-[15px] font-medium text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-1"
+                >
+                  <option value="">Ide Tersimpan (Bucket / Tanpa Hari)</option>
+                  {days.map((day, idx) => (
+                    <option key={day.id} value={day.id}>
+                      Hari {idx + 1} - {dayFormatter.format(day.date)}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+            ) : null}
 
             <FormField label="Kategori" htmlFor="edit-category" required>
               <select
