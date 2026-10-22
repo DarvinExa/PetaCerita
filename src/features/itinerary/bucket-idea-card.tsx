@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, MapPin, Sparkle } from "@phosphor-icons/react";
+import { CalendarPlus, MapPin } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/money";
 import { googleMapsUrl } from "@/features/maps/gmaps-url";
@@ -101,9 +101,9 @@ export function BucketIdeaCard({
       </div>
 
       {best ? (
-        <div className="mt-3 flex items-start gap-2 doodle-sticker bg-sand-50 px-2.5 py-2">
-          <Sparkle
-            className="mt-0.5 size-4 shrink-0 text-sand-500"
+        <div className="mt-3 flex items-start gap-2 rounded-xl border border-sand-200/70 bg-sand-50/70 p-2.5">
+          <MapPin
+            className="mt-0.5 size-4 shrink-0 text-sand-600"
             aria-hidden
           />
           <div className="min-w-0 flex-1">

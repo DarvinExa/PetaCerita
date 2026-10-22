@@ -34,10 +34,6 @@ export default async function DashboardPage() {
         />
         <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div className="max-w-xl">
-            <p className="mb-2 flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-teal-800">
-              <AirplaneTilt className="size-4" aria-hidden />
-              Ruang perjalanan kamu
-            </p>
             <h1 className="text-2xl font-bold tracking-[-0.02em] sm:text-[32px]">
               Rencana yang rapi, perjalanan yang lebih ringan.
             </h1>

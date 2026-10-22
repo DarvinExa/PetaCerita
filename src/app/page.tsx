@@ -8,7 +8,6 @@ import {
   CalendarCheck,
   CheckCircle,
   MapPin,
-  Sparkle,
   Clock,
   Receipt,
 } from "@phosphor-icons/react/dist/ssr";
@@ -24,8 +23,6 @@ const highlights = [
     preview: {
       time: "09:00",
       place: "Pantai Parangtritis",
-      badge: "Tersusun rapi",
-      badgeColor: "bg-teal-50 text-teal-800 border-teal-200/70",
     },
   },
   {
@@ -36,8 +33,6 @@ const highlights = [
     preview: {
       time: "4.2 km",
       place: "Kranggan ke Taman Sari",
-      badge: "12 mnt rute",
-      badgeColor: "bg-coral-50 text-coral-700 border-coral-200/70",
     },
   },
   {
@@ -48,8 +43,6 @@ const highlights = [
     preview: {
       time: "Rp 35.000",
       place: "Nasi Gudeg (4 orang)",
-      badge: "Bagi rata",
-      badgeColor: "bg-sand-50 text-sand-800 border-sand-200/70",
     },
   },
 ];
@@ -125,12 +118,7 @@ export default function HomePage() {
       <main>
         <section className="relative mx-auto grid min-h-[700px] w-full max-w-[1240px] items-center gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[1.05fr_.95fr] lg:gap-14 lg:py-20">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-teal-200/70 bg-teal-50/90 px-4 py-1.5 text-xs font-bold text-teal-800 shadow-[0_4px_12px_rgba(15,76,92,0.08),inset_1px_1px_3px_rgba(255,255,255,0.95)]">
-              <Sparkle className="size-4 text-sand-500" weight="fill" />
-              <span>Perencana Perjalanan Kolaboratif</span>
-            </div>
-
-            <h1 className="mt-6 text-[36px] font-extrabold leading-[1.14] tracking-[-0.035em] text-neutral-800 sm:text-[48px] lg:text-[54px]">
+            <h1 className="text-[36px] font-extrabold leading-[1.14] tracking-[-0.035em] text-neutral-800 sm:text-[48px] lg:text-[54px]">
               Karena setiap rencana perjalanan akan menghasilkan
               <span className="mt-2 block bg-gradient-to-r from-teal-700 via-teal-600 to-coral-500 bg-clip-text text-transparent">
                 cerita baru
@@ -153,21 +141,6 @@ export default function HomePage() {
               <Button size="lg" variant="secondary" asChild>
                 <Link href="/login">Masuk ke akun</Link>
               </Button>
-            </div>
-
-            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-[13px] font-bold text-neutral-600">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/80 px-3 py-1.5 shadow-sm">
-                <CheckCircle className="size-4 text-teal-600" weight="fill" />
-                Kolaborasi real-time
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/80 px-3 py-1.5 shadow-sm">
-                <CheckCircle className="size-4 text-sand-500" weight="fill" />
-                Tanpa spreadsheet
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/90 bg-white/80 px-3 py-1.5 shadow-sm">
-                <CheckCircle className="size-4 text-coral-500" weight="fill" />
-                Ramah di ponsel
-              </span>
             </div>
           </div>
 
@@ -232,11 +205,6 @@ export default function HomePage() {
                   <circle cx="220" cy="90" r="7" fill="#FB8B24" />
                   <circle cx="360" cy="50" r="7" fill="#E36414" />
                 </svg>
-
-                <div className="relative z-10 flex items-center gap-2 rounded-full border border-white/95 bg-white/95 px-4 py-2 text-xs font-extrabold text-neutral-800 shadow-[0_6px_14px_rgba(30,41,59,0.08),inset_1px_1px_2px_rgba(255,255,255,1)]">
-                  <MapPin className="size-4 text-coral-500" weight="fill" />
-                  <span>3 lokasi terhubung, estimasi 18 km</span>
-                </div>
               </div>
 
               {/* Itinerary Tiles */}
@@ -303,10 +271,7 @@ export default function HomePage() {
           className="mx-auto w-full max-w-[1240px] px-4 py-20 sm:px-6 lg:px-8"
         >
           <div className="mx-auto max-w-2xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-200/70 bg-teal-50/90 px-3.5 py-1 text-xs font-extrabold uppercase tracking-wider text-teal-800 shadow-sm">
-              Satu Tempat Untuk Semuanya
-            </span>
-            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-5xl">
+            <h2 className="text-3xl font-extrabold tracking-tight text-neutral-800 sm:text-5xl">
               Fokus menikmati trip, bukan mengurus kerumitannya.
             </h2>
             <p className="mt-4 text-base font-medium leading-relaxed text-neutral-500">
@@ -338,20 +303,13 @@ export default function HomePage() {
 
                   {/* Tactile Mini Preview inside card */}
                   <div className="mt-6 rounded-2xl border border-neutral-100 bg-neutral-50/80 p-3.5 shadow-inner">
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center justify-between text-xs font-semibold text-neutral-600">
                       <span className="flex items-center gap-1.5 font-bold text-neutral-800">
                         <Clock className="size-3.5 text-teal-700" />
                         {preview.time}
                       </span>
-                      <span
-                        className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${preview.badgeColor}`}
-                      >
-                        {preview.badge}
-                      </span>
+                      <span className="truncate">{preview.place}</span>
                     </div>
-                    <p className="mt-1.5 truncate text-xs font-semibold text-neutral-600">
-                      {preview.place}
-                    </p>
                   </div>
                 </div>
               ),
@@ -378,10 +336,6 @@ export default function HomePage() {
                   tercecer di catatan pribadi, atau hitungan patungan yang
                   membingungkan saat pulang liburan.
                 </p>
-                <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-teal-200/70 bg-white/90 px-4 py-2 text-xs font-bold text-teal-800 shadow-sm">
-                  <CheckCircle className="size-4 text-teal-600" weight="fill" />
-                  <span>Semua anggota trip dapat mengakses link yang sama</span>
-                </div>
               </div>
 
               <div className="grid gap-4">

@@ -74,7 +74,7 @@ export function TripDayOverview({ days }: { days: TripDayOverviewData[] }) {
           </button>
 
           <div className="min-w-0 text-center">
-            <p className="highlighter-yellow inline-block -rotate-1 px-1 text-[13px] font-bold uppercase tracking-[0.08em] text-slate-800">
+            <p className="text-[12px] font-bold uppercase tracking-wider text-teal-700">
               Hari {safeIndex + 1} dari {days.length}
             </p>
             <h3 className="mt-1 text-[18px] font-bold text-slate-900">
@@ -145,7 +145,7 @@ export function TripDayOverview({ days }: { days: TripDayOverviewData[] }) {
                 )}
               >
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <span className="doodle-sticker flex size-10 shrink-0 items-center justify-center bg-sky-100 text-[14px] font-bold text-slate-800">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl border border-teal-200/60 bg-teal-100 text-[14px] font-bold text-teal-900">
                     {index + 1}
                   </span>
 

@@ -53,7 +53,7 @@ export function CompactDayAgenda({
             Urutan Kunjungan
           </h3>
           {items.length > 0 ? (
-            <span className="inline-flex items-center gap-1.5 doodle-sticker bg-neutral-100 px-2 py-1 text-[11px] font-medium text-neutral-600">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-neutral-100 px-2.5 py-0.5 text-[11px] font-bold text-neutral-600">
               <Clock className="size-3.5" aria-hidden />
               {items.length} agenda
             </span>

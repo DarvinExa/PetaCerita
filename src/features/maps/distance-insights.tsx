@@ -26,7 +26,7 @@ export function DayDistanceSummary({ points }: { points: GeoPoint[] }) {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2 text-[12px] text-neutral-600">
-        <span className="inline-flex items-center gap-1.5 doodle-sticker bg-sky-50 px-2 py-1 font-medium text-sky-500">
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-teal-200/60 bg-teal-50 px-2.5 py-1 font-semibold text-teal-800">
           <Path className="size-4" aria-hidden />
           Total garis lurus {formatDistanceKm(totalHaversineKm(points))}
         </span>

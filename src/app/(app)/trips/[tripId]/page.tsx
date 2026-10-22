@@ -103,10 +103,7 @@ export default async function TripDetailPage({
         />
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-teal-700">
-              Ruang perjalanan
-            </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-[-0.02em] text-neutral-900 sm:text-[30px]">
+            <h1 className="text-2xl font-bold tracking-[-0.02em] text-neutral-900 sm:text-[30px]">
               {trip.name}
             </h1>
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-neutral-600">
